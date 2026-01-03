@@ -1,2 +1,0 @@
-C:\MinGW\bin\ar.exe qc libstb_truetype.a CMakeFiles/stb_truetype.dir/src/stb_truetype.cpp.obj
-C:\MinGW\bin\ranlib.exe libstb_truetype.a
