@@ -1,0 +1,12 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/thirdparty/SDL-release-2.30.5/src/main/windows/version.rc
+winresrc.h
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/thirdparty/SDL-release-2.30.5/src/main/windows/winresrc.h
+

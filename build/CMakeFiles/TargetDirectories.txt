@@ -1,0 +1,16 @@
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/CMakeFiles/mygame.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/CMakeFiles/ZERO_CHECK.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/thirdparty/SDL-release-2.30.5/CMakeFiles/sdl_headers_copy.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/thirdparty/SDL-release-2.30.5/CMakeFiles/SDL2main.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/thirdparty/SDL-release-2.30.5/CMakeFiles/SDL2-static.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/thirdparty/SDL-release-2.30.5/CMakeFiles/SDL2_test.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/thirdparty/SDL-release-2.30.5/CMakeFiles/uninstall.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/thirdparty/SDL-release-2.30.5/CMakeFiles/ALL_BUILD.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/thirdparty/stb_image/CMakeFiles/stb_image.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/thirdparty/stb_image/CMakeFiles/ALL_BUILD.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/thirdparty/stb_truetype/CMakeFiles/stb_truetype.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/thirdparty/stb_truetype/CMakeFiles/ALL_BUILD.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/thirdparty/glm/CMakeFiles/ALL_BUILD.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/thirdparty/imgui-docking/CMakeFiles/imgui.dir
+C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build/thirdparty/imgui-docking/CMakeFiles/ALL_BUILD.dir

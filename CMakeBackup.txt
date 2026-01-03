@@ -1,0 +1,123 @@
+cmake_minimum_required(VERSION 3.16)
+
+project(mygame LANGUAGES C CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# --------------------------------------------------
+# Build options
+# --------------------------------------------------
+
+option(PRODUCTION_BUILD "Make this a production build" OFF)
+
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+
+if (MSVC)
+    add_compile_options(/arch:AVX2)
+endif()
+
+# --------------------------------------------------
+# SDL configuration (STATIC)
+# --------------------------------------------------
+
+set(SDL_STATIC ON)
+set(SDL_SHARED OFF)
+
+# --------------------------------------------------
+# Third-party libraries
+# --------------------------------------------------
+
+add_subdirectory(thirdparty/SDL-release-2.30.5)
+add_subdirectory(thirdparty/stb_image)
+add_subdirectory(thirdparty/stb_truetype)
+add_subdirectory(thirdparty/glm)
+add_subdirectory(thirdparty/imgui-docking)
+
+# --------------------------------------------------
+# Sources
+# --------------------------------------------------
+
+file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+)
+
+add_executable(mygame ${MY_SOURCES})
+
+# --------------------------------------------------
+# Include paths
+# --------------------------------------------------
+
+target_include_directories(mygame PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+
+# --------------------------------------------------
+# Compile definitions
+# --------------------------------------------------
+
+target_compile_definitions(mygame PRIVATE
+    SDL_MAIN_HANDLED
+    GLFW_INCLUDE_NONE=1
+)
+
+if (PRODUCTION_BUILD)
+    target_compile_definitions(mygame PRIVATE
+        RESOURCES_PATH="./resources/"
+        PRODUCTION_BUILD=1
+    )
+else()
+    target_compile_definitions(mygame PRIVATE
+        RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/"
+        PRODUCTION_BUILD=0
+    )
+endif()
+
+target_compile_definitions(mygame PRIVATE
+    $<$<BOOL:NOT ${PRODUCTION_BUILD}>:DEBUG>
+)
+
+if (MSVC)
+    target_compile_definitions(mygame PRIVATE _CRT_SECURE_NO_WARNINGS)
+endif()
+
+# --------------------------------------------------
+# Link libraries
+# --------------------------------------------------
+
+target_link_libraries(mygame PRIVATE
+    glm
+    stb_image
+    stb_truetype
+    imgui
+    SDL2-static
+)
+
+# Required system libraries for static SDL on Windows
+if (MSVC)
+    target_link_libraries(mygame PRIVATE
+        winmm
+        imm32
+        version
+        setupapi
+        user32
+        gdi32
+        shell32
+        ole32
+        oleaut32
+        advapi32
+    )
+endif()
+
+# --------------------------------------------------
+# Windows subsystem (console)
+# --------------------------------------------------
+
+if (MSVC)
+    set_target_properties(mygame PROPERTIES
+        LINK_FLAGS "/SUBSYSTEM:CONSOLE"
+    )
+endif()

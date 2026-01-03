@@ -1,0 +1,1296 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5
+					],
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						9,
+						11
+					]
+				},
+				{
+					"build" : "thirdparty/SDL-release-2.30.5",
+					"jsonFile" : "directory-thirdparty.SDL-release-2.30.5-Debug-64df207fba02e06f4ff3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "thirdparty/SDL-release-2.30.5",
+					"targetIndexes" : 
+					[
+						1,
+						6,
+						7,
+						8,
+						12,
+						15
+					]
+				},
+				{
+					"build" : "thirdparty/stb_image",
+					"jsonFile" : "directory-thirdparty.stb_image-Debug-dcb4ec8abb1af9053272.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "thirdparty/stb_image",
+					"targetIndexes" : 
+					[
+						2,
+						13
+					]
+				},
+				{
+					"build" : "thirdparty/stb_truetype",
+					"jsonFile" : "directory-thirdparty.stb_truetype-Debug-eee74cd0a6b5360cf1f3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 3,
+					"source" : "thirdparty/stb_truetype",
+					"targetIndexes" : 
+					[
+						3,
+						14
+					]
+				},
+				{
+					"build" : "thirdparty/glm",
+					"jsonFile" : "directory-thirdparty.glm-Debug-5b0a93af10e03e16f7db.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 4,
+					"source" : "thirdparty/glm",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "thirdparty/imgui-docking",
+					"jsonFile" : "directory-thirdparty.imgui-docking-Debug-2d492c23c69eb90a2a2a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 5,
+					"source" : "thirdparty/imgui-docking",
+					"targetIndexes" : 
+					[
+						5,
+						10
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "mygame",
+					"targetIndexes" : 
+					[
+						0,
+						9,
+						11
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "SDL2",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						1,
+						6,
+						7,
+						8,
+						12,
+						15
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "stb_image",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						2,
+						13
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "stb_truetype",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						3,
+						14
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4
+					],
+					"name" : "glm",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						5
+					],
+					"name" : "imgui",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						5,
+						10
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ALL_BUILD-Debug-9972df8c8aac85d81d58.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "ALL_BUILD::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-ALL_BUILD-Debug-8dcd6b9b0c92a5438134.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "ALL_BUILD::@203766a7419bd4cdeb21",
+					"jsonFile" : "target-ALL_BUILD-Debug-25f123a5aba3dc54adf0.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "ALL_BUILD::@5402ffb4a20a82b7e45d",
+					"jsonFile" : "target-ALL_BUILD-Debug-7d3196ee22dd7627c629.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ALL_BUILD::@70cf8e0414446673260a",
+					"jsonFile" : "target-ALL_BUILD-Debug-aa941799d346b900ae22.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "ALL_BUILD::@0e4bebfa6e0abb85058b",
+					"jsonFile" : "target-ALL_BUILD-Debug-82ef0fab5fd26173bf97.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL2-static::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-SDL2-static-Debug-b9258786c77a2d16ee0e.json",
+					"name" : "SDL2-static",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL2_test::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-SDL2_test-Debug-b35636915865d5c4502c.json",
+					"name" : "SDL2_test",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL2main::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-SDL2main-Debug-2971d74868a44e9b676e.json",
+					"name" : "SDL2main",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ZERO_CHECK-Debug-969d3527e92978acc4f8.json",
+					"name" : "ZERO_CHECK",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "imgui::@0e4bebfa6e0abb85058b",
+					"jsonFile" : "target-imgui-Debug-3ef88e99f5e1113bf6ae.json",
+					"name" : "imgui",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mygame::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mygame-Debug-8c6ef3165fb84584a264.json",
+					"name" : "mygame",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "sdl_headers_copy::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-sdl_headers_copy-Debug-3bebd0511c9eb685163d.json",
+					"name" : "sdl_headers_copy",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "stb_image::@203766a7419bd4cdeb21",
+					"jsonFile" : "target-stb_image-Debug-c441f1ab8a297fdd6023.json",
+					"name" : "stb_image",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "stb_truetype::@5402ffb4a20a82b7e45d",
+					"jsonFile" : "target-stb_truetype-Debug-b845a742b49f334985bf.json",
+					"name" : "stb_truetype",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "uninstall::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-uninstall-Debug-d17faa11498344452788.json",
+					"name" : "uninstall",
+					"projectIndex" : 1
+				}
+			]
+		},
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5
+					],
+					"jsonFile" : "directory-.-Release-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						9,
+						11
+					]
+				},
+				{
+					"build" : "thirdparty/SDL-release-2.30.5",
+					"jsonFile" : "directory-thirdparty.SDL-release-2.30.5-Release-64df207fba02e06f4ff3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "thirdparty/SDL-release-2.30.5",
+					"targetIndexes" : 
+					[
+						1,
+						6,
+						7,
+						8,
+						12,
+						15
+					]
+				},
+				{
+					"build" : "thirdparty/stb_image",
+					"jsonFile" : "directory-thirdparty.stb_image-Release-dcb4ec8abb1af9053272.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "thirdparty/stb_image",
+					"targetIndexes" : 
+					[
+						2,
+						13
+					]
+				},
+				{
+					"build" : "thirdparty/stb_truetype",
+					"jsonFile" : "directory-thirdparty.stb_truetype-Release-eee74cd0a6b5360cf1f3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 3,
+					"source" : "thirdparty/stb_truetype",
+					"targetIndexes" : 
+					[
+						3,
+						14
+					]
+				},
+				{
+					"build" : "thirdparty/glm",
+					"jsonFile" : "directory-thirdparty.glm-Release-5b0a93af10e03e16f7db.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 4,
+					"source" : "thirdparty/glm",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "thirdparty/imgui-docking",
+					"jsonFile" : "directory-thirdparty.imgui-docking-Release-2d492c23c69eb90a2a2a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 5,
+					"source" : "thirdparty/imgui-docking",
+					"targetIndexes" : 
+					[
+						5,
+						10
+					]
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "mygame",
+					"targetIndexes" : 
+					[
+						0,
+						9,
+						11
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "SDL2",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						1,
+						6,
+						7,
+						8,
+						12,
+						15
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "stb_image",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						2,
+						13
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "stb_truetype",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						3,
+						14
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4
+					],
+					"name" : "glm",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						5
+					],
+					"name" : "imgui",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						5,
+						10
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ALL_BUILD-Release-9972df8c8aac85d81d58.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "ALL_BUILD::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-ALL_BUILD-Release-8dcd6b9b0c92a5438134.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "ALL_BUILD::@203766a7419bd4cdeb21",
+					"jsonFile" : "target-ALL_BUILD-Release-25f123a5aba3dc54adf0.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "ALL_BUILD::@5402ffb4a20a82b7e45d",
+					"jsonFile" : "target-ALL_BUILD-Release-7d3196ee22dd7627c629.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ALL_BUILD::@70cf8e0414446673260a",
+					"jsonFile" : "target-ALL_BUILD-Release-aa941799d346b900ae22.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "ALL_BUILD::@0e4bebfa6e0abb85058b",
+					"jsonFile" : "target-ALL_BUILD-Release-82ef0fab5fd26173bf97.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL2-static::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-SDL2-static-Release-be4d734c879111d8476f.json",
+					"name" : "SDL2-static",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL2_test::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-SDL2_test-Release-60a2d7b8df275474c9b4.json",
+					"name" : "SDL2_test",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL2main::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-SDL2main-Release-e49ee57eff21500d5a0b.json",
+					"name" : "SDL2main",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ZERO_CHECK-Release-969d3527e92978acc4f8.json",
+					"name" : "ZERO_CHECK",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "imgui::@0e4bebfa6e0abb85058b",
+					"jsonFile" : "target-imgui-Release-50fd984981788cf61447.json",
+					"name" : "imgui",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mygame::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mygame-Release-a4487f7820af4c1427ea.json",
+					"name" : "mygame",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "sdl_headers_copy::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-sdl_headers_copy-Release-3bebd0511c9eb685163d.json",
+					"name" : "sdl_headers_copy",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "stb_image::@203766a7419bd4cdeb21",
+					"jsonFile" : "target-stb_image-Release-43f49e2cfa632bd249e8.json",
+					"name" : "stb_image",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "stb_truetype::@5402ffb4a20a82b7e45d",
+					"jsonFile" : "target-stb_truetype-Release-274d1ddc6f8608a8ef0d.json",
+					"name" : "stb_truetype",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "uninstall::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-uninstall-Release-d17faa11498344452788.json",
+					"name" : "uninstall",
+					"projectIndex" : 1
+				}
+			]
+		},
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5
+					],
+					"jsonFile" : "directory-.-MinSizeRel-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						9,
+						11
+					]
+				},
+				{
+					"build" : "thirdparty/SDL-release-2.30.5",
+					"jsonFile" : "directory-thirdparty.SDL-release-2.30.5-MinSizeRel-64df207fba02e06f4ff3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "thirdparty/SDL-release-2.30.5",
+					"targetIndexes" : 
+					[
+						1,
+						6,
+						7,
+						8,
+						12,
+						15
+					]
+				},
+				{
+					"build" : "thirdparty/stb_image",
+					"jsonFile" : "directory-thirdparty.stb_image-MinSizeRel-dcb4ec8abb1af9053272.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "thirdparty/stb_image",
+					"targetIndexes" : 
+					[
+						2,
+						13
+					]
+				},
+				{
+					"build" : "thirdparty/stb_truetype",
+					"jsonFile" : "directory-thirdparty.stb_truetype-MinSizeRel-eee74cd0a6b5360cf1f3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 3,
+					"source" : "thirdparty/stb_truetype",
+					"targetIndexes" : 
+					[
+						3,
+						14
+					]
+				},
+				{
+					"build" : "thirdparty/glm",
+					"jsonFile" : "directory-thirdparty.glm-MinSizeRel-5b0a93af10e03e16f7db.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 4,
+					"source" : "thirdparty/glm",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "thirdparty/imgui-docking",
+					"jsonFile" : "directory-thirdparty.imgui-docking-MinSizeRel-2d492c23c69eb90a2a2a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 5,
+					"source" : "thirdparty/imgui-docking",
+					"targetIndexes" : 
+					[
+						5,
+						10
+					]
+				}
+			],
+			"name" : "MinSizeRel",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "mygame",
+					"targetIndexes" : 
+					[
+						0,
+						9,
+						11
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "SDL2",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						1,
+						6,
+						7,
+						8,
+						12,
+						15
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "stb_image",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						2,
+						13
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "stb_truetype",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						3,
+						14
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4
+					],
+					"name" : "glm",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						5
+					],
+					"name" : "imgui",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						5,
+						10
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ALL_BUILD-MinSizeRel-9972df8c8aac85d81d58.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "ALL_BUILD::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-ALL_BUILD-MinSizeRel-8dcd6b9b0c92a5438134.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "ALL_BUILD::@203766a7419bd4cdeb21",
+					"jsonFile" : "target-ALL_BUILD-MinSizeRel-25f123a5aba3dc54adf0.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "ALL_BUILD::@5402ffb4a20a82b7e45d",
+					"jsonFile" : "target-ALL_BUILD-MinSizeRel-7d3196ee22dd7627c629.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ALL_BUILD::@70cf8e0414446673260a",
+					"jsonFile" : "target-ALL_BUILD-MinSizeRel-aa941799d346b900ae22.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "ALL_BUILD::@0e4bebfa6e0abb85058b",
+					"jsonFile" : "target-ALL_BUILD-MinSizeRel-82ef0fab5fd26173bf97.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL2-static::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-SDL2-static-MinSizeRel-e63ff634ad8c5387ffc4.json",
+					"name" : "SDL2-static",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL2_test::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-SDL2_test-MinSizeRel-86fd0612cd362856f359.json",
+					"name" : "SDL2_test",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL2main::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-SDL2main-MinSizeRel-c4efd1b0f31c20ea219d.json",
+					"name" : "SDL2main",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ZERO_CHECK-MinSizeRel-969d3527e92978acc4f8.json",
+					"name" : "ZERO_CHECK",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "imgui::@0e4bebfa6e0abb85058b",
+					"jsonFile" : "target-imgui-MinSizeRel-865dacc17e559376b4fe.json",
+					"name" : "imgui",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mygame::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mygame-MinSizeRel-5a85c27ceb20c82c9c73.json",
+					"name" : "mygame",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "sdl_headers_copy::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-sdl_headers_copy-MinSizeRel-3bebd0511c9eb685163d.json",
+					"name" : "sdl_headers_copy",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "stb_image::@203766a7419bd4cdeb21",
+					"jsonFile" : "target-stb_image-MinSizeRel-90340bc1af0d637f185d.json",
+					"name" : "stb_image",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "stb_truetype::@5402ffb4a20a82b7e45d",
+					"jsonFile" : "target-stb_truetype-MinSizeRel-1b4aae5ece8456f8c654.json",
+					"name" : "stb_truetype",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "uninstall::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-uninstall-MinSizeRel-d17faa11498344452788.json",
+					"name" : "uninstall",
+					"projectIndex" : 1
+				}
+			]
+		},
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5
+					],
+					"jsonFile" : "directory-.-RelWithDebInfo-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						9,
+						11
+					]
+				},
+				{
+					"build" : "thirdparty/SDL-release-2.30.5",
+					"jsonFile" : "directory-thirdparty.SDL-release-2.30.5-RelWithDebInfo-64df207fba02e06f4ff3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "thirdparty/SDL-release-2.30.5",
+					"targetIndexes" : 
+					[
+						1,
+						6,
+						7,
+						8,
+						12,
+						15
+					]
+				},
+				{
+					"build" : "thirdparty/stb_image",
+					"jsonFile" : "directory-thirdparty.stb_image-RelWithDebInfo-dcb4ec8abb1af9053272.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "thirdparty/stb_image",
+					"targetIndexes" : 
+					[
+						2,
+						13
+					]
+				},
+				{
+					"build" : "thirdparty/stb_truetype",
+					"jsonFile" : "directory-thirdparty.stb_truetype-RelWithDebInfo-eee74cd0a6b5360cf1f3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 3,
+					"source" : "thirdparty/stb_truetype",
+					"targetIndexes" : 
+					[
+						3,
+						14
+					]
+				},
+				{
+					"build" : "thirdparty/glm",
+					"jsonFile" : "directory-thirdparty.glm-RelWithDebInfo-5b0a93af10e03e16f7db.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 4,
+					"source" : "thirdparty/glm",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "thirdparty/imgui-docking",
+					"jsonFile" : "directory-thirdparty.imgui-docking-RelWithDebInfo-2d492c23c69eb90a2a2a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 5,
+					"source" : "thirdparty/imgui-docking",
+					"targetIndexes" : 
+					[
+						5,
+						10
+					]
+				}
+			],
+			"name" : "RelWithDebInfo",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "mygame",
+					"targetIndexes" : 
+					[
+						0,
+						9,
+						11
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "SDL2",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						1,
+						6,
+						7,
+						8,
+						12,
+						15
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "stb_image",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						2,
+						13
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "stb_truetype",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						3,
+						14
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4
+					],
+					"name" : "glm",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						5
+					],
+					"name" : "imgui",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						5,
+						10
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ALL_BUILD-RelWithDebInfo-9972df8c8aac85d81d58.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "ALL_BUILD::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-ALL_BUILD-RelWithDebInfo-8dcd6b9b0c92a5438134.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "ALL_BUILD::@203766a7419bd4cdeb21",
+					"jsonFile" : "target-ALL_BUILD-RelWithDebInfo-25f123a5aba3dc54adf0.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "ALL_BUILD::@5402ffb4a20a82b7e45d",
+					"jsonFile" : "target-ALL_BUILD-RelWithDebInfo-7d3196ee22dd7627c629.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ALL_BUILD::@70cf8e0414446673260a",
+					"jsonFile" : "target-ALL_BUILD-RelWithDebInfo-aa941799d346b900ae22.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "ALL_BUILD::@0e4bebfa6e0abb85058b",
+					"jsonFile" : "target-ALL_BUILD-RelWithDebInfo-82ef0fab5fd26173bf97.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL2-static::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-SDL2-static-RelWithDebInfo-5b713698120613a2c583.json",
+					"name" : "SDL2-static",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL2_test::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-SDL2_test-RelWithDebInfo-abca197cd02317df3ae6.json",
+					"name" : "SDL2_test",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL2main::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-SDL2main-RelWithDebInfo-84473a6a95bf8484578e.json",
+					"name" : "SDL2main",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ZERO_CHECK-RelWithDebInfo-969d3527e92978acc4f8.json",
+					"name" : "ZERO_CHECK",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "imgui::@0e4bebfa6e0abb85058b",
+					"jsonFile" : "target-imgui-RelWithDebInfo-3cdb5240620508de0c53.json",
+					"name" : "imgui",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mygame::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mygame-RelWithDebInfo-b01c7ad392ce109d0382.json",
+					"name" : "mygame",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "sdl_headers_copy::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-sdl_headers_copy-RelWithDebInfo-3bebd0511c9eb685163d.json",
+					"name" : "sdl_headers_copy",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "stb_image::@203766a7419bd4cdeb21",
+					"jsonFile" : "target-stb_image-RelWithDebInfo-07de7ff0e3e0252f07f7.json",
+					"name" : "stb_image",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "stb_truetype::@5402ffb4a20a82b7e45d",
+					"jsonFile" : "target-stb_truetype-RelWithDebInfo-55c88e4b0a3bebc78416.json",
+					"name" : "stb_truetype",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "uninstall::@f0bd86adb2b9741fc8b9",
+					"jsonFile" : "target-uninstall-RelWithDebInfo-d17faa11498344452788.json",
+					"name" : "uninstall",
+					"projectIndex" : 1
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT/build",
+		"source" : "C:/Users/Admin/Documents/Projects/C++ Projects/MAKA PROJECT"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 8
+	}
+}

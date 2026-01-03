@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\Documents\Projects\C++ Projects\MAKA PROJECT\build\CMakeFiles\90b371a88d023387185f19f0b5009202\uninstall.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\Documents\Projects\C++ Projects\MAKA PROJECT\thirdparty\SDL-release-2.30.5\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Admin\Documents\Projects\C++ Projects\MAKA PROJECT\build\thirdparty\SDL-release-2.30.5\CMakeFiles\uninstall" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{4CAF8D45-9A79-30CE-A28A-79DC19A617B2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
