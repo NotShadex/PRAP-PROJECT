@@ -11,6 +11,8 @@ option(PRODUCTION_BUILD "Make this a production build" OFF)
 # 2. SDL Static Settings (Apply to the subdirectories)
 set(SDL_STATIC ON CACHE BOOL "" FORCE)
 set(SDL_SHARED OFF CACHE BOOL "" FORCE)
+# If I don't have this it doesn't want to build on Linux! Something to do with the audio drivers for SDL2 being outdated
+set(SDL_PIPEWIRE OFF CACHE BOOL "" FORCE) 
 
 # 3. Add Third Party Libraries
 add_subdirectory(thirdparty/SDL-release-2.30.5)
