@@ -1,6 +1,7 @@
 #pragma once
 #include <imgui.h>
-#include <Player.h>
+#include "Player.h"
+#include "Enemy.h"
 #include "backends/imgui_impl_sdl2.h"
 #include "backends/imgui_impl_sdlrenderer.h"
 
