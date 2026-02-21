@@ -1,104 +1,107 @@
 #include "Player.h"
+#include "Globals.h"
 #include <SDL.h>
 
-/* CONSTANTS */
-const float GRAVITY = 2000.0f;
-const float JUMP_SPEED = -1000.0f;
+const float WALK_SPEED = 200.0f;
+const float SHIP_SPEED = 300.0f;
+int index = 0;
 
-const float MOVE_SPEED = 500.0f;
-const float RUN_SPEED = 1000.0f;
-const float ACCELERATION = 3000.0f;
-const float FRICITION = 2500.0f;
-
-const float DASH_SPEED = 1500.0f;
-const float DASH_LOCK_TIME = 0.08f; // seconds
-
-const int FLOOR_Y = 500; // TEMP
-
-Player::Player() : position{100.0f, 100.0f}, velocity{0.0f, 0.0f}
+Player::Player() 
+    : position{100.0f, 100.0f}, velocity{0.0f, 0.0f}
 {
 }
 
-Player::~Player()
+Player::~Player() 
 {
 }
 
-void Player::Move(int direction, float deltaTime) 
+void Player::Move(glm::vec2 input, float deltaTime) 
 {
-    if (direction != 0) dir = direction; // Dir will be used for spritesheets
-
-    if (dashTimer > 0.0f) return; // IGNORES X MAX SPEED WHILE DASH ACTIVE
-
-    if (!isRunning) {
-        velocity.x = direction * MOVE_SPEED;
-        return;
+    if (glm::length(input) > 0.0f) {
+        velocity = input * ( (tile >= 0 && tile < 4)? WALK_SPEED : SHIP_SPEED );
+    } 
+    else {
+        velocity = glm::vec2(0.0f);
     }
+}
 
-    if (direction != 0) {
-        velocity.x += direction * ACCELERATION * deltaTime;
-    } else {
-        if (velocity.x > 0) {
-            velocity.x -= FRICITION  * deltaTime;
-            if (velocity.x < 0) velocity.x = 0;
-        } else if (velocity.x < 0) {
-            velocity.x += FRICITION  * deltaTime;
-            if (velocity.x > 0) velocity.x = 0;
+void Player::Update(int tileUnder, float deltaTime)
+{
+    position += velocity * deltaTime;
+
+    /* BORDER CONTROL haha */
+    float halfW = (currSprite.sourceRect.w * sizeMultiplier) / 2.0f; 
+    float halfH = (currSprite.sourceRect.h * sizeMultiplier) / 3.0f; 
+    if (position.x < halfW) position.x = halfW;
+    if (position.x > (MAP_WIDTH * CELL_SIZE) - halfW) position.x = (MAP_WIDTH * CELL_SIZE) - halfW;
+    if (position.y < halfH) position.y = halfH;
+    if (position.y > (MAP_HEIGHT * CELL_SIZE) - halfH) position.y = (MAP_HEIGHT * CELL_SIZE) - halfH;
+
+    if (spriteSheet.empty()) return; // just in case if (glm::length(velocity) > 0.1f) 
+    
+    /* DEFINE THE SPRITE */
+    if (velocity.x > 0.0f && velocity.y < 0.0f) { index = 4; }      // Up-Right
+    else if (velocity.x < 0.0f && velocity.y < 0.0f) { index = 6; } // Up-Left
+    else if (velocity.x > 0.0f && velocity.y > 0.0f) { index = 2; } // Down-Right
+    else if (velocity.x < 0.0f && velocity.y > 0.0f) { index = 0; } // Down-Left
+    else if (velocity.x > 0.0f) { index = 3; } // Right 
+    else if (velocity.x < 0.0f) { index = 7; } // Left  
+    else if (velocity.y < 0.0f) { index = 5; } // Up 
+    else if (velocity.y > 0.0f) { index = 1; } // Down 
+
+    // If the tile under the player is water [ 3 < x ] change the offset of the vector so it matches the ship index
+    int spriteOffset = (tileUnder >= 0 && tileUnder < 4)? 0 : 8; 
+    sizeMultiplier = (tileUnder >= 0 && tileUnder < 4)? 2 : 1;
+    currSprite = spriteSheet[spriteOffset + index];
+    tile = tileUnder; 
+}
+
+void Player::LoadTileset(const std::string &prefix, int count)
+{
+    for (int i = 0; i < count; i++) {
+        std::string name = prefix + "_" + std::to_string(i); 
+        Sprite s = ResourceManager::GetSprite(name);
+        spriteSheet.push_back(s);
+    }
+    if (!spriteSheet.empty()) {
+        currSprite = spriteSheet[0];
+    }
+}
+
+void Player::Render(SDL_Renderer* renderer, glm::vec2 cam)
+{
+    int w = currSprite.sourceRect.w * sizeMultiplier;
+    int h = currSprite.sourceRect.h * sizeMultiplier;
+    SDL_Rect playerRect = { (int)(position.x - (w / 2) - cam.x), 
+                            (int)(position.y - (h / 2) - cam.y), 
+                            w, 
+                            h 
+                        }; 
+    SDL_RenderCopy(renderer, currSprite.texture, &currSprite.sourceRect, &playerRect);
+}
+
+// SDL_Rect playerRect = { (int)position.x, (int)position.y, 32, 32 };
+    // SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    // SDL_RenderFillRect(renderer, &playerRect);
+
+/*
+    if (glm::length(input) > 0.0f) { // length > 0 prevents division by zero in glm::normalize
+        input = glm::normalize(input); // prevents moving faster diagonally
+        velocity += input * ACCELERATION * deltaTime; // Apply Acceleration
+    } 
+    else {
+        if (glm::length(velocity) > 0.0f) {
+            float frictionAmount = FRICTION * deltaTime;
+            
+            if (glm::length(velocity) <= frictionAmount) { // stops completely to avoid jitter
+                velocity = glm::vec2(0.0f);
+            } else {
+                velocity -= glm::normalize(velocity) * frictionAmount;
+            }
         }
     }
-    velocity.x = glm::clamp(velocity.x, -RUN_SPEED, RUN_SPEED);
-}
 
-void Player::Jump() 
-{
-    if (isOnFloor) {
-        velocity.y = JUMP_SPEED;
-        isOnFloor = 0;
+    if (glm::length(velocity) > MOVE_SPEED) { // clamp max speed
+        velocity = glm::normalize(velocity) * MOVE_SPEED;
     }
-}
-
-void Player::Run(bool shiftHeld) {
-    wasRunning = isRunning; // TODO
-    isRunning = shiftHeld;
-    // TODO
-    if (!wasRunning && isRunning && canDash)
-     {
-        velocity.x = dir * DASH_SPEED;
-        dashTimer = DASH_LOCK_TIME;
-        canDash = false;
-    }
-    if (!isRunning)
-        canDash = true;
-}
-
-void Player::Update(float deltaTime)
-{
-    // TODO
-    if (dashTimer > 0.0f) 
-    {
-        dashTimer -= deltaTime;
-        if (dashTimer < 0.0f) dashTimer = 0.0f;
-    }
-    // TODO
-    if (!isOnFloor) velocity.y += GRAVITY * deltaTime;
-    if (dashTimer > 0.0f) velocity.y = 0;
-
-    position.x += velocity.x * deltaTime;
-    position.y += velocity.y * deltaTime;
-    if (position.y >= FLOOR_Y)
-    {
-        isOnFloor = 1;
-        position.y = FLOOR_Y;
-        velocity.y = 0.0f;
-    } else {
-        isOnFloor = 0;
-    }
-}
-
-void Player::Render(SDL_Renderer* renderer)
-{
-    SDL_Rect playerRect = { (int)position.x, (int)position.y, 50, 50 };
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &playerRect);
-}
-
-
+*/

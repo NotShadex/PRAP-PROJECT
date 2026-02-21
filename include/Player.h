@@ -1,26 +1,22 @@
 #pragma once
 #include <SDL.h>
 #include <glm/glm.hpp>
+#include "ResourceManager.h"
 
 class Player
 {
-public:
-    Player();
-    ~Player();
-    void Move(int direction, float deltaTime);
-    void Jump();
-    void Run(bool shiftHeld);
-    void Update(float deltaTime);
-    void Render(SDL_Renderer* renderer);
-public:
-    bool isRunning = 0;
-    bool isOnFloor = 0;
-    int dir = 1;
-    glm::vec2 position;
-    glm::vec2 velocity;
-
-    bool wasRunning = 0;
-    bool canDash = 0;
-    float dashTimer = 0.0f;
-
+    private:
+        std::vector<Sprite> spriteSheet;
+        Sprite currSprite;
+    public:
+        Player();
+        ~Player();
+        void Move(glm::vec2 input, float deltaTime);
+        void Update(int tileUnder, float deltaTime);
+        void LoadTileset(const std::string& prefix, int count);
+        void Render(SDL_Renderer* renderer, glm::vec2 cam);
+    public:
+        int tile = 0; int sizeMultiplier = 1;
+        glm::vec2 position;
+        glm::vec2 velocity;
 };
