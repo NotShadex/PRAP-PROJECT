@@ -18,11 +18,13 @@ class Game
         Game();
         ~Game();
         void Run();
+        void NextLevel();
     private: 
         SDL_Window* window;
         SDL_Renderer* renderer;
         Player player;
         Debug debug;
         bool quit = false;
+        int currentLevel = 3;
 };
 
