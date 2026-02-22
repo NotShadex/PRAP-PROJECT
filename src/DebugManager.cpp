@@ -11,6 +11,5 @@ void Debug::Render(Player player)
     ImGui::Text("Velocity Y: %f", player.velocity.y);
     ImGui::Text("Position X: %f", player.position.x);
     ImGui::Text("Position Y: %f", player.position.y);
-    ImGui::Text("Tile under the player: %d", player.tile);
     ImGui::End();
 }
