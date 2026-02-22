@@ -106,11 +106,11 @@ void Game::Run()
         
 	
 		/* CAMERA */
-		float targetZoom = (player.sizeMultiplier == 2) ? 4.0f : 2.0f;
+		float targetZoom = (player.sizeMultiplier == 2) ? BASE_ZOOM * 2 : BASE_ZOOM;
 		float diff = targetZoom - zoom;
 		if (std::abs(diff) < 0.01f) { zoom = targetZoom; } // If diff is smaller than 0.01 SNAP to the target
 		else { zoom += diff * ZOOM_SPEED * deltaTime; } // keep on zoomin'
-		zoom = glm::clamp(zoom, 2.0f, 4.0f); // just in case
+		zoom = glm::clamp(zoom, BASE_ZOOM, BASE_ZOOM * 2); // just in case
 		SDL_RenderSetScale(renderer, zoom, zoom);
 
 		cam.x = (player.position.x - (WIDTH / 2 / zoom));
@@ -124,7 +124,7 @@ void Game::Run()
 		/* UPDATES */
 		player.Update(tileID, deltaTime);
 		for (auto enemy : allEnemies) {
-			int tileInFront = map.GetTile(enemy->position.x + 20, enemy->position.y); // Get tile in front of the enemy
+			int tileInFront = map.GetTile(enemy->position.x + 30.0f, enemy->position.y); // Get tile in front of the enemy
 			enemy->Update(deltaTime, player.position, tileInFront);
 
 			if (enemy->dropTrashFlag) { // If enemy signals it wants to drop trash
@@ -139,7 +139,18 @@ void Game::Run()
 		/* RENDERING */
         SDL_RenderClear(renderer);
 		map.Draw(renderer, cam);
-		for (auto enemy : allEnemies) { enemy->Render(renderer, cam, 2); }
+		float sightRadius = SIGHT_RADIUS;
+		for (auto enemy : allEnemies) 
+		{ 
+			float dist = glm::distance(player.position, enemy->position);
+			if (dist < sightRadius) {
+				float alphaRatio = 1.0f - (dist / sightRadius); 
+				Uint8 alpha = (Uint8)(alphaRatio * 255);
+				SDL_SetTextureAlphaMod(enemy->sprite.texture, alpha); // Tells SDL to make this texture transparent
+				enemy->Render(renderer, cam, 2);
+				SDL_SetTextureAlphaMod(enemy->sprite.texture, 255); // Reset alpha to 255 so it doesn't affect other things using the same texture
+			}
+		}
 		for (auto trash : allTrash) { trash->Render(renderer, cam, 4); }
 		player.Render(renderer, cam);
 		
@@ -155,6 +166,8 @@ void Game::Run()
         SDL_RenderPresent(renderer);
 	}
 }
+
+
 void Game::NextLevel()
 {
 	currentLevel++;
@@ -162,8 +175,8 @@ void Game::NextLevel()
     for(auto e : allEnemies) delete e; // just in case
     allEnemies.clear();
     
-    int numEnemies = 2 + (currentLevel * 1);  // Level 1: 3 enemies. Level 2: 5 enemies. Level 3: 7...
-    float baseSpeed = 80.0f + (currentLevel * 20.0f); // Level 1: 100 speed. Level 2: 120 speed...
+    int numEnemies = (currentLevel * 2) + 1;  // Level 1: 3 enemies. Level 2: 5 enemies. Level 3: 7...
+    float newSpeed = BASE_SPEED + (currentLevel * 20.0f); // Level 1: 100 speed. Level 2: 120 speed...
 
     std::cout << "Starting Level " << currentLevel << " with " << numEnemies << " enemies!" << std::endl;
 
@@ -171,13 +184,13 @@ void Game::NextLevel()
         float rx, ry;
         int tile = -1;
         
-        while (tile < 0 || tile > 3) { // Find a random sand tile
+        while (tile < 0 || tile > 3) { // Finds a random sand tile
             rx = rand() % (int)(MAP_WIDTH * CELL_SIZE);
             ry = rand() % (int)(MAP_HEIGHT * CELL_SIZE);
             tile = map.GetTile(rx, ry);
         }
-        Behavior b = (i % 2 == 0) ? Behavior::KAMIKAZE : Behavior::RUNNER; // Assign type
+        Behavior b = (i % 2 == 0) ? Behavior::KAMIKAZE : Behavior::RUNNER;
 
-        allEnemies.push_back(new Enemy(glm::vec2(rx, ry), ResourceManager::GetSprite("trash_0"), b, baseSpeed));
+        allEnemies.push_back(new Enemy(glm::vec2(rx, ry), ResourceManager::GetSprite("trash_0"), b, newSpeed));
     }
 }
