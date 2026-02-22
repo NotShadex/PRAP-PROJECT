@@ -2,8 +2,7 @@
 #include "Globals.h"
 #include <SDL.h>
 
-const float WALK_SPEED = 200.0f;
-const float SHIP_SPEED = 300.0f;
+
 int index = 0;
 
 Player::Player() 
@@ -79,29 +78,3 @@ void Player::Render(SDL_Renderer* renderer, glm::vec2 cam)
                         }; 
     SDL_RenderCopy(renderer, currSprite.texture, &currSprite.sourceRect, &playerRect);
 }
-
-// SDL_Rect playerRect = { (int)position.x, (int)position.y, 32, 32 };
-    // SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-    // SDL_RenderFillRect(renderer, &playerRect);
-
-/*
-    if (glm::length(input) > 0.0f) { // length > 0 prevents division by zero in glm::normalize
-        input = glm::normalize(input); // prevents moving faster diagonally
-        velocity += input * ACCELERATION * deltaTime; // Apply Acceleration
-    } 
-    else {
-        if (glm::length(velocity) > 0.0f) {
-            float frictionAmount = FRICTION * deltaTime;
-            
-            if (glm::length(velocity) <= frictionAmount) { // stops completely to avoid jitter
-                velocity = glm::vec2(0.0f);
-            } else {
-                velocity -= glm::normalize(velocity) * frictionAmount;
-            }
-        }
-    }
-
-    if (glm::length(velocity) > MOVE_SPEED) { // clamp max speed
-        velocity = glm::normalize(velocity) * MOVE_SPEED;
-    }
-*/
