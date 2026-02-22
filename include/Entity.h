@@ -9,10 +9,12 @@ class Entity {
         glm::vec2 velocity;
         Sprite sprite;
         bool active = true; // For Garbage Collection
+        int sizeMultiplier;
     public:
         Entity(glm::vec2 pos, Sprite s) : position(pos), sprite(s) {}
         virtual ~Entity() {}
-        void Render(SDL_Renderer* renderer, glm::vec2 cam, int sizeMultiplier=1) {
+        void Render(SDL_Renderer* renderer, glm::vec2 cam, int sizeMulti=1) {
+            sizeMultiplier = sizeMulti;
             if (!active || !sprite.texture) return;
             int w = sprite.sourceRect.w * sizeMultiplier;
             int h = sprite.sourceRect.h * sizeMultiplier;
