@@ -9,11 +9,11 @@ class Entity {
         glm::vec2 velocity;
         Sprite sprite;
         bool active = true; // For Garbage Collection
-        int sizeMultiplier;
+        int sizeMultiplier = 2; // DEFINE this otherwise there is unexpected behaviour for Entity spawning!
     public:
         Entity(glm::vec2 pos, Sprite s) : position(pos), sprite(s) {}
         virtual ~Entity() {}
-        void Render(SDL_Renderer* renderer, glm::vec2 cam, int sizeMulti=1) {
+        void Render(SDL_Renderer* renderer, glm::vec2 cam, int sizeMulti=2) {
             sizeMultiplier = sizeMulti;
             if (!active || !sprite.texture) return;
             int w = sprite.sourceRect.w * sizeMultiplier;
