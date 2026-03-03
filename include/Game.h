@@ -19,12 +19,17 @@ class Game
         ~Game();
         void Run();
         void NextLevel();
+        void Update(float deltaTime);
+        void HandleCamera(float deltaTime);
+        void HandleCollisions();
+        void HandleGarbage();
     private: 
         SDL_Window* window;
         SDL_Renderer* renderer;
         Player player;
         Debug debug;
+    private:
         bool quit = false;
-        int currentLevel = 3;
+        int currentLevel = 0;
 };
 

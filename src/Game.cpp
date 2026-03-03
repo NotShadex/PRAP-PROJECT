@@ -4,6 +4,7 @@
 #include "ResourceManager.h"
 #include "Trash.h"
 #include "Enemy.h"
+#include "ScoreManager.h"
 #include <chrono>
 #include <iostream>
 #include <ctime>
@@ -41,7 +42,9 @@ Game::Game()
 	player.LoadTileset("player", 8);
 	ResourceManager::LoadSheet(renderer, "ship.bmp", "ship", 96, 64);
 	player.LoadTileset("ship", 8);
-	ResourceManager::LoadSheet(renderer, "trashbag.bmp", "trash", 16, 16);
+	// ENEMIES & TRASH
+	ResourceManager::LoadSheet(renderer, "enemy.bmp", "enemy", 16, 24);
+	ResourceManager::LoadSheet(renderer, "trash.bmp", "trash", 14, 9);
 	
 	
 	// DEBUG MENU
@@ -86,12 +89,10 @@ void Game::Run()
 			if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE) { quit = true; break; }
 #ifdef DEBUG
 			ImGui_ImplSDL2_ProcessEvent(&event); // This makes the window intercative (close, slide,...)
-			if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_TAB) debug.Toggle();
+			if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_TAB) { debug.Toggle(); }
 #endif
 		}
-
 		if(quit) break;
-
 
 		/* PLAYER MOVEMENT */
 		const Uint8* keys = SDL_GetKeyboardState(NULL); 
@@ -100,41 +101,11 @@ void Game::Run()
 		if (keys[SDL_SCANCODE_S]) input.y += 1.0f;
 		if (keys[SDL_SCANCODE_A]) input.x -= 1.0f;
 		if (keys[SDL_SCANCODE_D]) input.x += 1.0f;
-
 		player.Move(input, deltaTime);
-		int tileID = map.GetTile(player.position.x, player.position.y);
-        
-	
-		/* CAMERA */
-		float targetZoom = (player.sizeMultiplier == 2) ? BASE_ZOOM * 2 : BASE_ZOOM;
-		float diff = targetZoom - zoom;
-		if (std::abs(diff) < 0.01f) { zoom = targetZoom; } // If diff is smaller than 0.01 SNAP to the target
-		else { zoom += diff * ZOOM_SPEED * deltaTime; } // keep on zoomin'
-		zoom = glm::clamp(zoom, BASE_ZOOM, BASE_ZOOM * 2); // just in case
-		SDL_RenderSetScale(renderer, zoom, zoom);
-
-		cam.x = (player.position.x - (WIDTH / 2 / zoom));
-		cam.y = (player.position.y - (HEIGHT / 2 / zoom));
-		if (cam.x < 0) cam.x = 0.0f;
-		if (cam.y < 0) cam.y = 0.0f;
-		if (cam.x > (MAP_WIDTH * CELL_SIZE) - (WIDTH / zoom)) cam.x = (MAP_WIDTH * CELL_SIZE) - (WIDTH / zoom);
-		if (cam.y > (MAP_HEIGHT * CELL_SIZE) - (HEIGHT / zoom)) cam.y = (MAP_HEIGHT * CELL_SIZE) - (HEIGHT / zoom);
-
-
-		/* UPDATES */
-		player.Update(tileID, deltaTime);
-		for (auto enemy : allEnemies) {
-			int tileInFront = map.GetTile(enemy->position.x + 30.0f, enemy->position.y); // Get tile in front of the enemy
-			enemy->Update(deltaTime, player.position, tileInFront);
-
-			if (enemy->dropTrashFlag) { // If enemy signals it wants to drop trash
-				allTrash.push_back(new Trash(enemy->position, ResourceManager::GetSprite("trash_0")));
-				enemy->dropTrashFlag = false;
-			}
-		}
-		for (auto trash : allTrash) { trash->Update(deltaTime); }
-
-		if (allEnemies.empty()) { NextLevel(); }
+		
+		HandleCamera(deltaTime);
+		Update(deltaTime);
+		HandleGarbage();
 
 		/* RENDERING */
         SDL_RenderClear(renderer);
@@ -147,11 +118,11 @@ void Game::Run()
 				float alphaRatio = 1.0f - (dist / sightRadius); 
 				Uint8 alpha = (Uint8)(alphaRatio * 255);
 				SDL_SetTextureAlphaMod(enemy->sprite.texture, alpha); // Tells SDL to make this texture transparent
-				enemy->Render(renderer, cam, 2);
+				enemy->Render(renderer, cam);
 				SDL_SetTextureAlphaMod(enemy->sprite.texture, 255); // Reset alpha to 255 so it doesn't affect other things using the same texture
 			}
 		}
-		for (auto trash : allTrash) { trash->Render(renderer, cam, 4); }
+		for (auto trash : allTrash) { trash->Render(renderer, cam); }
 		player.Render(renderer, cam);
 		
 #ifdef DEBUG
@@ -159,7 +130,7 @@ void Game::Run()
 		ImGui_ImplSDLRenderer_NewFrame();
 		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
-		debug.Render(player);  
+		debug.Render(player, allEnemies.size(), ScoreManager::Get());  
 		ImGui::Render();
 		ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
 #endif
@@ -176,21 +147,121 @@ void Game::NextLevel()
     allEnemies.clear();
     
     int numEnemies = (currentLevel * 2) + 1;  // Level 1: 3 enemies. Level 2: 5 enemies. Level 3: 7...
-    float newSpeed = BASE_SPEED + (currentLevel * 20.0f); // Level 1: 100 speed. Level 2: 120 speed...
+    float newSpeed = ENEMY_BASE_SPEED + (currentLevel * 20.0f); // Level 1: 100 speed. Level 2: 120 speed...
 
+#ifdef DEBUG
     std::cout << "Starting Level " << currentLevel << " with " << numEnemies << " enemies!" << std::endl;
+#endif
 
     for(int i = 0; i < numEnemies; i++) {
         float rx, ry;
         int tile = -1;
-        
         while (tile < 0 || tile > 3) { // Finds a random sand tile
-            rx = rand() % (int)(MAP_WIDTH * CELL_SIZE);
-            ry = rand() % (int)(MAP_HEIGHT * CELL_SIZE);
+            rx = rand() % (MAP_WIDTH * CELL_SIZE - CELL_SIZE) + CELL_SIZE; // range[32, 1280) this prevents them getting stuck
+            ry = rand() % (MAP_HEIGHT * CELL_SIZE - CELL_SIZE) + CELL_SIZE; // range[32, 736)
             tile = map.GetTile(rx, ry);
         }
-        Behavior b = (i % 2 == 0) ? Behavior::KAMIKAZE : Behavior::RUNNER;
 
-        allEnemies.push_back(new Enemy(glm::vec2(rx, ry), ResourceManager::GetSprite("trash_0"), b, newSpeed));
+        Behavior b = (i % 2 == 0) ? Behavior::KAMIKAZE : Behavior::RUNNER; // Randomly picks behaviour
+		// ResourceManager::GetSprite("trash_0") is a dummy variable it gets overwritten instantly
+		Enemy* newEnemy = new Enemy(glm::vec2(rx, ry), ResourceManager::GetSprite("trash_0"), b, newSpeed); 
+		newEnemy->LoadTileset("enemy", 8); 	
+		allEnemies.push_back(newEnemy);			
     }
+}
+
+
+void Game::Update(float deltaTime) {
+	int tileID = map.GetTile(player.position.x, player.position.y);
+	player.Update(tileID, deltaTime);
+	for (auto enemy : allEnemies) {
+		int tileInFront = map.GetTile(enemy->position.x + 10.0f, enemy->position.y); // Checks a bit upfront
+		enemy->Update(deltaTime, player.position, tileInFront);
+
+		if (enemy->dropTrashFlag) { // If enemy signals it wants to drop trash
+			float newSpeed = TRASH_BASE_SPEED + (currentLevel * 20.0f);
+			allTrash.push_back(new Trash(enemy->position, ResourceManager::GetSprite("trash_0"), newSpeed));
+			enemy->dropTrashFlag = false;
+		}
+	}
+	for (auto trash : allTrash) { trash->Update(deltaTime); }
+	HandleCollisions();
+	if (allEnemies.empty()) { NextLevel(); }
+}
+
+
+void Game::HandleCamera(float deltaTime) {
+	float targetZoom = (player.sizeMultiplier == 2) ? BASE_ZOOM * 2 : BASE_ZOOM;
+	float diff = targetZoom - zoom;
+	if (std::abs(diff) < 0.01f) { zoom = targetZoom; } // If diff is smaller than 0.01 SNAP to the target
+	else { zoom += diff * ZOOM_SPEED * deltaTime; } // keep on zoomin'
+	zoom = glm::clamp(zoom, BASE_ZOOM, BASE_ZOOM * 2); // just in case
+	SDL_RenderSetScale(renderer, zoom, zoom);
+
+	cam.x = (player.position.x - (WIDTH / 2 / zoom));
+	cam.y = (player.position.y - (HEIGHT / 2 / zoom));
+	if (cam.x < 0) cam.x = 0.0f;
+	if (cam.y < 0) cam.y = 0.0f;
+	if (cam.x > (MAP_WIDTH * CELL_SIZE) - (WIDTH / zoom)) cam.x = (MAP_WIDTH * CELL_SIZE) - (WIDTH / zoom);
+	if (cam.y > (MAP_HEIGHT * CELL_SIZE) - (HEIGHT / zoom)) cam.y = (MAP_HEIGHT * CELL_SIZE) - (HEIGHT / zoom);
+}
+
+void Game::HandleCollisions() {
+	float playerRadius = CELL_SIZE;
+	/* HANDLES TRASH TO PLAYER COLLISON */
+    for (auto t : allTrash) { 
+        if (!t->active) continue;
+        float dist = glm::distance(player.position, t->position);
+        if (dist < playerRadius + 15.0f) {
+            t->active = false;  
+            ScoreManager::Add(TRASH_POINTS);
+            std::cout << "Trash Collected! Score: " << ScoreManager::Get() << std::endl;
+        }
+    }
+	/* HANDLES PLAYER TO ENEMY COLLISON */
+    for (auto e : allEnemies) { 
+        if (!e->active) continue;
+        float dist = glm::distance(player.position, e->position);
+        float hitRadius = (player.sizeMultiplier == 1) ? CELL_SIZE * 2 : CELL_SIZE; // If player is a boat they have a bigger "bump" radius
+
+        if (dist < hitRadius) {
+            e->active = false;      
+            ScoreManager::Add(ENEMY_POINTS);
+            std::cout << "Foe Defeated! Score: " << ScoreManager::Get() << std::endl;
+        }
+    }
+	/* HANDLES ENEMY TO ENEMY COLLISON */
+	for (int i = 0; i < allEnemies.size(); i++) {
+        for (int j = i + 1; j < allEnemies.size(); j++) {
+            Enemy* a = allEnemies[i];
+            Enemy* b = allEnemies[j];
+            float dist = glm::distance(a->position, b->position);
+            float minDist = 16.0f; // Radius of enemy A + Radius of enemy B
+
+            if (dist < minDist) {
+				if (a->type == Behavior::KAMIKAZE) {
+					a->ChangeDirection();
+				}
+				if (b->type == Behavior::KAMIKAZE) {
+					b->ChangeDirection();
+				}
+                // if (a->type == Behavior::RUNNER) a->tileReached = true;
+            }
+        }
+    }
+}
+
+void Game::HandleGarbage() {
+	allTrash.erase(std::remove_if(allTrash.begin(), allTrash.end(), 
+    [](Trash* t) {
+        if (!t->active) { delete t; return true; }
+        return false;
+    }), allTrash.end());
+
+	// Remove dead Enemies
+	allEnemies.erase(std::remove_if(allEnemies.begin(), allEnemies.end(), 
+		[](Enemy* e) {
+			if (!e->active) { delete e; return true; }
+			return false;
+		}), allEnemies.end());
 }
