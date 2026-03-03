@@ -9,7 +9,7 @@ class Debug
 {
 public:
     Debug() = default;
-    void Render(Player player);
+    void Render(Player player, int numEnemies, int score);
     void Toggle() { showWindow = !showWindow; }
 private:
     bool showWindow = 1;

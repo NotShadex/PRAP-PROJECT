@@ -1,6 +1,6 @@
 #include "DebugManager.h"
 
-void Debug::Render(Player player)
+void Debug::Render(Player player, int numEnemies, int score)
 {
     if (!showWindow) return;
     ImGuiWindowFlags windowFlags = 0;
@@ -11,5 +11,7 @@ void Debug::Render(Player player)
     ImGui::Text("Velocity Y: %f", player.velocity.y);
     ImGui::Text("Position X: %f", player.position.x);
     ImGui::Text("Position Y: %f", player.position.y);
+    ImGui::Text("Enemies alive: %d", numEnemies);
+    ImGui::Text("Score: %d", score);
     ImGui::End();
 }
