@@ -3,8 +3,6 @@
 #include <SDL.h>
 
 
-int index = 0;
-
 Player::Player() 
     : position{100.0f, 100.0f}, velocity{0.0f, 0.0f}
 {
@@ -17,7 +15,7 @@ Player::~Player()
 void Player::Move(glm::vec2 input, float deltaTime) 
 {
     if (glm::length(input) > 0.0f) {
-        velocity = input * ( (tile >= 0 && tile < 4)? WALK_SPEED : SHIP_SPEED );
+        velocity = input * ( (tile >= 0 && tile < 4)? WALK_SPEED : SHIP_SPEED ); // higher velocity on water
     } 
     else {
         velocity = glm::vec2(0.0f);
@@ -38,15 +36,15 @@ void Player::Update(int tileUnder, float deltaTime)
 
     if (spriteSheet.empty()) return; // just in case if (glm::length(velocity) > 0.1f) 
     
-    /* DEFINE THE SPRITE */
-    if (velocity.x > 0.0f && velocity.y < 0.0f) { index = 4; }      // Up-Right
-    else if (velocity.x < 0.0f && velocity.y < 0.0f) { index = 6; } // Up-Left
-    else if (velocity.x > 0.0f && velocity.y > 0.0f) { index = 2; } // Down-Right
-    else if (velocity.x < 0.0f && velocity.y > 0.0f) { index = 0; } // Down-Left
-    else if (velocity.x > 0.0f) { index = 3; } // Right 
-    else if (velocity.x < 0.0f) { index = 7; } // Left  
-    else if (velocity.y < 0.0f) { index = 5; } // Up 
-    else if (velocity.y > 0.0f) { index = 1; } // Down 
+    // sets the sprite direction just simple if-checks
+    if (velocity.x > 0.0f && velocity.y < 0.0f) { index = UP_RIGHT; }      // Up-Right
+    else if (velocity.x < 0.0f && velocity.y < 0.0f) { index = UP_LEFT; } // Up-Left
+    else if (velocity.x > 0.0f && velocity.y > 0.0f) { index = DOWN_RIGHT; } // Down-Right
+    else if (velocity.x < 0.0f && velocity.y > 0.0f) { index = DOWN_LEFT; } // Down-Left
+    else if (velocity.x > 0.0f) { index = RIGHT; } // Right 
+    else if (velocity.x < 0.0f) { index = LEFT; } // Left  
+    else if (velocity.y < 0.0f) { index = UP; } // Up 
+    else if (velocity.y > 0.0f) { index = DOWN; } // Down 
 
     // If the tile under the player is water [ 3 < x ] change the offset of the vector so it matches the ship index
     int spriteOffset = (tileUnder >= 0 && tileUnder < 4)? 0 : 8; 
@@ -62,14 +60,14 @@ void Player::LoadTileset(const std::string &prefix, int count)
         Sprite s = ResourceManager::GetSprite(name);
         spriteSheet.push_back(s);
     }
-    if (!spriteSheet.empty()) {
+    if (!spriteSheet.empty()) { // edge case
         currSprite = spriteSheet[0];
     }
 }
 
 void Player::Render(SDL_Renderer* renderer, glm::vec2 cam)
 {
-    int w = currSprite.sourceRect.w * sizeMultiplier;
+    int w = currSprite.sourceRect.w * sizeMultiplier; // we have to account for sprite scaling!
     int h = currSprite.sourceRect.h * sizeMultiplier;
     SDL_Rect playerRect = { (int)(position.x - (w / 2) - cam.x), 
                             (int)(position.y - (h / 2) - cam.y), 
