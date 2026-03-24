@@ -16,8 +16,6 @@ set(SDL_PIPEWIRE OFF CACHE BOOL "" FORCE)
 
 # Add Third Party Libraries
 add_subdirectory(thirdparty/SDL-release-2.30.5)
-add_subdirectory(thirdparty/stb_image)
-add_subdirectory(thirdparty/stb_truetype)
 add_subdirectory(thirdparty/glm)
 add_subdirectory(thirdparty/imgui-docking)
 
