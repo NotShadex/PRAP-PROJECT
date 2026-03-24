@@ -26,7 +26,7 @@ MapManager::MapManager(int width, int height, float cellSize)
                 { 2, 2, 0, 0, 0, 1, 1, 0, 2, 0, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19, 16, 17, 18, 19  },
                 { 0, 0, 0, 1, 1, 1, 0, 3, 2, 0, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7  },
                 { 1, 2, 0, 0, 2, 3, 0, 3, 0, 9, 10, 11, 8, 9, 10, 11, 8, 9, 10, 11, 8, 9, 10, 11, 8, 9, 10, 11, 8, 9, 10, 11, 8, 9, 10, 11, 8, 9, 10, 11  },
-                { 1, 1, 0, 2, 0, 0, 3, 0, 12, 13, 14, 15, 12, 13, 14, 15, 12, 13, 14, 15, 12, 13, 14, 15, 12, 13, 14, 15, 12, 13, 14, 15, 12, 13, 14, 15, 12, 13, 14, 15  }
+                { 1, 1, 0, 2, 0, 0, 3, 0, 0, 13, 14, 15, 12, 13, 14, 15, 12, 13, 14, 15, 12, 13, 14, 15, 12, 13, 14, 15, 12, 13, 14, 15, 12, 13, 14, 15, 12, 13, 14, 15  }
             };
 }
 
@@ -35,7 +35,6 @@ void MapManager::LoadTileset(const std::string& prefix, int count) {
     for (int i = 0; i < count; i++) {
         std::string name = prefix + "_" + std::to_string(i); // Looks for "tile_0", "tile_1"...
         Sprite s = ResourceManager::GetSprite(name);
-        
         tileSet.push_back(s);
     }
 }
@@ -44,9 +43,7 @@ int MapManager::GetTile(float worldX, float worldY)
 {
     int x = (int)(worldX / cellSize);
     int y = (int)(worldY / cellSize);
-    if (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight) {
-        return grid[y][x];
-    }
+    if (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight) return grid[y][x];
     return -1;
 }
 
@@ -56,7 +53,7 @@ void MapManager::Draw(SDL_Renderer* renderer, glm::vec2 cam) {
             
             int tileID = grid[y][x];
 
-            if (tileID >= 0 && tileID < tileSet.size()) { // Safety check: make sure the ID exists in our loaded tileset
+            if (tileID >= 0 && tileID < tileSet.size()) { // make sure the ID exists
                 Sprite& s = tileSet[tileID];
 
                 if (s.texture) {
@@ -72,5 +69,3 @@ void MapManager::Draw(SDL_Renderer* renderer, glm::vec2 cam) {
         }
     }
 }
-
-// PUT THIS IN MAIN IF THERE IS TEXTURE BLEEDING: SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
