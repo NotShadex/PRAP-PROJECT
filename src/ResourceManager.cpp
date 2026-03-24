@@ -27,10 +27,8 @@ bool ResourceManager::LoadTexture(SDL_Renderer* renderer, const std::string& fil
 }
 
 SDL_Texture* ResourceManager::GetTexture(const std::string& name) {
-    if (textures.find(name) != textures.end()) {
-        return textures[name];
-    }
-    return nullptr;
+    if (textures.find(name) != textures.end())  return textures[name];
+    return nullptr; // obivously need to return something since we have SDL_Texture* return type
 }
 
 void ResourceManager::Clear() {
@@ -66,8 +64,9 @@ bool ResourceManager::LoadSheet(SDL_Renderer* renderer, const std::string& fileN
             count++;
         }
     }
-
+#ifdef DEBUG
     std::cout << "Loaded " << count << " tiles from " << fileName << std::endl;
+#endif
     return true;
 }
 
@@ -75,6 +74,5 @@ Sprite ResourceManager::GetSprite(const std::string& name) {
     if (sprites.find(name) != sprites.end()) {
         return sprites[name];
     }
-    // Return an empty sprite if not found
-    return { nullptr, {0, 0, 0, 0} };
+    return { nullptr, {0, 0, 0, 0} }; // Returns an empty sprite if not found
 }
