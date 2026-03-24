@@ -17,6 +17,7 @@ class Player
         void Render(SDL_Renderer* renderer, glm::vec2 cam);
     public:
         int tile = 0; int sizeMultiplier = 1;
+        int index = 0;
         glm::vec2 position;
         glm::vec2 velocity;
 };
