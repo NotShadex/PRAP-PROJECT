@@ -23,20 +23,20 @@ add_subdirectory(thirdparty/imgui-docking)
 
 # Sources
 file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-add_executable(mygame ${MY_SOURCES})
+add_executable(trashmania ${MY_SOURCES})
 
 # Include Paths
-target_include_directories(mygame PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(trashmania PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # Production vs Debug Logic
 if (PRODUCTION_BUILD)
-    target_compile_definitions(mygame PRIVATE 
+    target_compile_definitions(trashmania PRIVATE 
         PRODUCTION_BUILD=1 
-        # In production, look in the folder next to the .exe
+        # In production looks int the folder next to the .exe
         RESOURCES_PATH="resources/"
     )
 else()
-    target_compile_definitions(mygame PRIVATE 
+    target_compile_definitions(trashmania PRIVATE 
         PRODUCTION_BUILD=0 
         # Used escaped quotes so C++ sees it as a string: "C:/path/to/resources/"
         RESOURCES_PATH=\"${CMAKE_CURRENT_SOURCE_DIR}/resources/\"
@@ -45,25 +45,23 @@ else()
 endif()
 
 # Common Definitions
-target_compile_definitions(mygame PRIVATE SDL_MAIN_HANDLED)
+target_compile_definitions(trashmania PRIVATE SDL_MAIN_HANDLED)
 
-# Platform Specific Settings (Windows vs Linux)
+# Platform Specific Settings (VS and Linux)
 if (MSVC)
-    target_compile_options(mygame PRIVATE /arch:AVX2)
-    target_compile_definitions(mygame PRIVATE _CRT_SECURE_NO_WARNINGS)
-    set_target_properties(mygame PROPERTIES LINK_FLAGS "/SUBSYSTEM:CONSOLE")
+    target_compile_options(trashmania PRIVATE /arch:AVX2)
+    target_compile_definitions(trashmania PRIVATE _CRT_SECURE_NO_WARNINGS)
+    set_target_properties(trashmania PROPERTIES LINK_FLAGS "/SUBSYSTEM:CONSOLE")
     # Windows-specific system libs for static SDL
-    target_link_libraries(mygame PRIVATE winmm imm32 version setupapi)
+    target_link_libraries(trashmania PRIVATE winmm imm32 version setupapi)
 else()
     # Linux-specific: Static SDL often needs these
-    target_link_libraries(mygame PRIVATE pthread dl)
+    target_link_libraries(trashmania PRIVATE pthread dl)
 endif()
 
 # Link Everything
-target_link_libraries(mygame PRIVATE
+target_link_libraries(trashmania PRIVATE
     glm
-    stb_image
-    stb_truetype
     imgui
     SDL2-static
 )
