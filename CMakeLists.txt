@@ -31,14 +31,14 @@ if (PRODUCTION_BUILD)
     target_compile_definitions(trashmania PRIVATE 
         PRODUCTION_BUILD=1 
         # In production looks int the folder next to the .exe
-        RESOURCES_PATH="resources/"
+        RESOURCES_PATH=\"resources/\"
     )
 else()
     target_compile_definitions(trashmania PRIVATE 
         PRODUCTION_BUILD=0 
         # Used escaped quotes so C++ sees it as a string: "C:/path/to/resources/"
         RESOURCES_PATH=\"${CMAKE_CURRENT_SOURCE_DIR}/resources/\"
-        DEBUG 
+        DEBUG=1
     )
 endif()
 
