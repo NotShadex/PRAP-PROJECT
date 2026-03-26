@@ -12,11 +12,10 @@ void Enemy::ChangeDirection() {
 }
 
 void Enemy::Update(float deltaTime, glm::vec2 playerPos, int tileInFront) {
-    /*
     if (tileInFront > 3) {
         position.x -= ENEMY_BASE_SPEED * 100.0f * deltaTime; // if it were to happen quickly scuttles over to the sand tiles
     }
-    */
+
     if (type == Behavior::KAMIKAZE) {
         float currentSpeed = speed;
         if (tileInFront > 3 || tileInFront == -1) {
@@ -33,7 +32,7 @@ void Enemy::Update(float deltaTime, glm::vec2 playerPos, int tileInFront) {
         if (tileInFront > 3) {
             if (distanceToPlayer < FEAR_RADIUS) tileReached = true; // if they were running away and reached water then -> "Jesus take the wheel"
             ChangeDirection();
-            position += velocity * currentSpeed * deltaTime;
+            position += velocity * currentSpeed * deltaTime; // "Jesus take the wheel" same logic as KAMIKAZE
         } 
         if (!tileReached) {
             if (distanceToPlayer < FEAR_RADIUS) {
@@ -43,7 +42,7 @@ void Enemy::Update(float deltaTime, glm::vec2 playerPos, int tileInFront) {
             } 
         } 
         else {
-            position += velocity * speed * deltaTime; // "Jesus take the wheel"
+            position += velocity * speed * deltaTime; 
         }
 
     }
@@ -58,7 +57,6 @@ void Enemy::Update(float deltaTime, glm::vec2 playerPos, int tileInFront) {
 
     Animation();
 
-    /* TRASH DROPPING */
     dropTimer += deltaTime; 
     if (tileInFront > 3 && dropTimer > DROP_COOLDOWN) { // If tile in front is water (ID > 3)
         dropTrashFlag = true; // Signal to Game to spawn trash
@@ -80,14 +78,14 @@ void Enemy::LoadTileset(const std::string &prefix, int count)
 
 void Enemy::Animation() {
     if (spriteSheet.empty()) return;
-    if (velocity.x > 0.0f && velocity.y < 0.0f) { index = UP_RIGHT; }      // Up-Right
-    else if (velocity.x < 0.0f && velocity.y < 0.0f) { index = UP_LEFT; } // Up-Left
-    else if (velocity.x > 0.0f && velocity.y > 0.0f) { index = DOWN_RIGHT; } // Down-Right
-    else if (velocity.x < 0.0f && velocity.y > 0.0f) { index = DOWN_LEFT; } // Down-Left
-    else if (velocity.x > 0.0f) { index = RIGHT; } // Right 
-    else if (velocity.x < 0.0f) { index = LEFT; } // Left  
-    else if (velocity.y < 0.0f) { index = UP; } // Up 
-    else if (velocity.y > 0.0f) { index = DOWN; } // Down 
+    if (velocity.x > 0.0f && velocity.y < 0.0f) { index = UP_RIGHT; }      
+    else if (velocity.x < 0.0f && velocity.y < 0.0f) { index = UP_LEFT; } 
+    else if (velocity.x > 0.0f && velocity.y > 0.0f) { index = DOWN_RIGHT; } 
+    else if (velocity.x < 0.0f && velocity.y > 0.0f) { index = DOWN_LEFT; } 
+    else if (velocity.x > 0.0f) { index = RIGHT; }  
+    else if (velocity.x < 0.0f) { index = LEFT; }  
+    else if (velocity.y < 0.0f) { index = UP; } 
+    else if (velocity.y > 0.0f) { index = DOWN; } 
     sprite = spriteSheet[index];
 }
 

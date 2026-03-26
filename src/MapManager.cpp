@@ -62,7 +62,6 @@ void MapManager::Draw(SDL_Renderer* renderer, glm::vec2 cam) {
                     continue;
                 }
             }
-            // Fallback: If no tile is found, draw a magenta square
             SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
             SDL_Rect destRect = {(int)(x*cellSize), (int)(y*cellSize), (int)cellSize, (int)cellSize};
             SDL_RenderFillRect(renderer, &destRect);

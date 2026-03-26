@@ -5,7 +5,7 @@
 #include <vector>
 #include <iostream>
 
-enum class Behavior { KAMIKAZE, RUNNER, GLAZER };
+enum class Behavior { KAMIKAZE, RUNNER };
 
 class Enemy : public Entity {
     private:

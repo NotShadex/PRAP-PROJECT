@@ -37,19 +37,20 @@ void Player::Update(int tileUnder, float deltaTime)
     if (spriteSheet.empty()) return; // just in case if (glm::length(velocity) > 0.1f) 
     
     // sets the sprite direction just simple if-checks
-    if (velocity.x > 0.0f && velocity.y < 0.0f) { index = UP_RIGHT; }      // Up-Right
-    else if (velocity.x < 0.0f && velocity.y < 0.0f) { index = UP_LEFT; } // Up-Left
-    else if (velocity.x > 0.0f && velocity.y > 0.0f) { index = DOWN_RIGHT; } // Down-Right
-    else if (velocity.x < 0.0f && velocity.y > 0.0f) { index = DOWN_LEFT; } // Down-Left
-    else if (velocity.x > 0.0f) { index = RIGHT; } // Right 
-    else if (velocity.x < 0.0f) { index = LEFT; } // Left  
-    else if (velocity.y < 0.0f) { index = UP; } // Up 
-    else if (velocity.y > 0.0f) { index = DOWN; } // Down 
+    if (velocity.x > 0.0f && velocity.y < 0.0f) { index = UP_RIGHT; }      
+    else if (velocity.x < 0.0f && velocity.y < 0.0f) { index = UP_LEFT; } 
+    else if (velocity.x > 0.0f && velocity.y > 0.0f) { index = DOWN_RIGHT; } 
+    else if (velocity.x < 0.0f && velocity.y > 0.0f) { index = DOWN_LEFT; } 
+    else if (velocity.x > 0.0f) { index = RIGHT; } 
+    else if (velocity.x < 0.0f) { index = LEFT; } 
+    else if (velocity.y < 0.0f) { index = UP; } 
+    else if (velocity.y > 0.0f) { index = DOWN; } 
 
     // If the tile under the player is water [ 3 < x ] change the offset of the vector so it matches the ship index
     int spriteOffset = (tileUnder >= 0 && tileUnder < 4)? 0 : 8; 
     sizeMultiplier = (tileUnder >= 0 && tileUnder < 4)? 2 : 1;
-    currSprite = spriteSheet[spriteOffset + index];
+    int currSpriteIndex = spriteOffset + index;
+    currSprite = spriteSheet[currSpriteIndex];
     tile = tileUnder; 
 }
 
@@ -67,7 +68,7 @@ void Player::LoadTileset(const std::string &prefix, int count)
 
 void Player::Render(SDL_Renderer* renderer, glm::vec2 cam)
 {
-    int w = currSprite.sourceRect.w * sizeMultiplier; // we have to account for sprite scaling!
+    int w = currSprite.sourceRect.w * sizeMultiplier; // we have to account for sprite scaling we apply!
     int h = currSprite.sourceRect.h * sizeMultiplier;
     SDL_Rect playerRect = { (int)(position.x - (w / 2) - cam.x), 
                             (int)(position.y - (h / 2) - cam.y), 
