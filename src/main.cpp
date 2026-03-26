@@ -1,5 +1,5 @@
-#include <Game.h>
-#include <iostream>
+#include "Game.h"
+/** GITHUB REPO: https://github.com/NotShadex/PRAP-PROJECT **/
 
 int main() 
 {
