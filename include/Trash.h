@@ -2,16 +2,17 @@
 #include "ScoreManager.h"
 #include "Entity.h"
 
-class Trash : public Entity {
-    public:
-        float speed;
-    public:
-        Trash(glm::vec2 pos, Sprite s, float startSpeed) : Entity(pos, s), speed(startSpeed) {
-            velocity = glm::vec2(1.0f, 0.0f); // set the x speed to 1 since we multiply it by speed (and it floats to the right)
-        }
+class Trash : public Entity 
+{
+public: // I like to seperate variables from the functions in classes I think this is a good practice for readability
+    float speed;
+public:
+    Trash(glm::vec2 pos, Sprite s, float startSpeed) : Entity(pos, s), speed(startSpeed) {
+        velocity = glm::vec2(1.0f, 0.0f); // set the x speed to 1 since we multiply it by speed (and it floats to the right)
+    }
 
-        void Update(float deltaTime) { 
-            position += velocity * speed * deltaTime;
-            if (position.x > 1400) { active = false; ScoreManager::Add(-TRASH_POINTS_PENALTY);} // Kill if it floats off the map
-        }
+    void Update(float deltaTime) { 
+        position += velocity * speed * deltaTime;
+        if (position.x > 1400) { active = false; ScoreManager::Add(-TRASH_POINTS_PENALTY);} // Kill if it floats off the map
+    }
 };
