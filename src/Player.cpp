@@ -1,11 +1,16 @@
 #include "Player.h"
 #include "Globals.h"
+#include <ctime>
 #include <SDL.h>
 
 
 Player::Player() 
-    : position{100.0f, 100.0f}, velocity{0.0f, 0.0f}
 {
+    srand(time(NULL));
+    float rx = rand() % ((int)(MAP_WIDTH * CELL_SIZE / 4) - CELL_SIZE) + CELL_SIZE; 
+    float ry = rand() % ((MAP_HEIGHT * CELL_SIZE - CELL_SIZE)); 
+    position = glm::vec2(rx, ry);
+    velocity = glm::vec2(0.0f, 0.0f);
 }
 
 Player::~Player() 
