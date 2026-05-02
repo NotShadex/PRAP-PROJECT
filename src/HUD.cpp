@@ -173,3 +173,94 @@ void HUD::RenderMenu(SDL_Renderer* renderer, GameState& currentState, float delt
         ImGui::PopStyleVar();
     ImGui::End();
 }
+
+void HUD::RenderGameOver(SDL_Renderer* renderer, int score, int bestScore, int level, GameState& currentState) {
+    // ImGui Setup
+    SDL_Texture* bg = ResourceManager::GetTexture("game_over");
+    SDL_RenderCopy(renderer, bg, NULL, NULL);
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground;
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 10.0f);
+
+    // --- LEADERBOARD WINDOW ---
+    float boardW = 450.0f; 
+    float boardH = 400.0f;
+    // Center the board horizontally, put it near the top
+    ImGui::SetNextWindowPos(ImVec2((currentWindowWidth - boardW) * 0.5f, 50)); 
+    ImGui::SetNextWindowSize(ImVec2(boardW, boardH));
+    ImGui::Begin("Leaderboard", NULL, flags);
+        // --- TITLE ---
+        float winWidth = ImGui::GetWindowSize().x;
+        float titleW = ImGui::CalcTextSize("GAME OVER!").x;
+        ImGui::SetCursorPosX((winWidth - titleW) * 0.5f);
+        ImGui::TextColored(ImVec4(1, 0, 0, 1), "GAME OVER!");
+        
+        // --- PLAYER SCORE ---
+        std::string scoreStr = "YOUR SCORE: " + std::to_string(score);
+        float scoreW = ImGui::CalcTextSize(scoreStr.c_str()).x;
+        ImGui::SetCursorPosX((winWidth - scoreW) * 0.5f);
+        ImGui::Text("%s", scoreStr.c_str());
+
+        ImGui::Dummy(ImVec2(0, 30)); 
+
+        // --- TABLE HEADERS ---
+        // We use a fixed offset for columns to keep them perfectly aligned
+        float col1 = 50.0f;  // Rank
+        float col2 = 150.0f; // Score
+        float col3 = 300.0f; // Name
+
+        ImGui::SetCursorPosX(col1); ImGui::Text("RANK");
+        ImGui::SameLine(col2);      ImGui::Text("SCORE");
+        ImGui::SameLine(col3);      ImGui::Text("NAME");
+        ImGui::Separator();
+
+        // --- TABLE ROWS ---
+        for (int i = 1; i <= 5; i++) {
+            // Rank logic (1st, 2nd, etc)
+            std::string prefix = "TH";
+            if (i == 1) prefix = "ST";
+            else if (i == 2) prefix = "ND";
+            else if (i == 3) prefix = "RD";
+
+            // Row Color: Highlight the top rank in Gold
+            if (i == 1) ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0.8f, 0, 1));
+
+            ImGui::SetCursorPosX(col1); 
+            ImGui::Text("%d%s", i, prefix.c_str());
+
+            ImGui::SameLine(col2); 
+            ImGui::Text("%d", bestScore - (i * 100)); // Mockup data
+
+            ImGui::SameLine(col3); 
+            //std::string nameMock = TruncateName("LongPlayerNameExample", 10);
+            ImGui::Text("%s", "player");
+
+            if (i == 1) ImGui::PopStyleColor();
+        }
+    ImGui::End();
+
+    float menuW = 300.0f; float menuH = 200.0f; 
+    ImGui::SetNextWindowPos(ImVec2((currentWindowWidth - menuW) * 0.5f, (currentWindowHeight - menuH) * 0.9f));
+    ImGui::SetNextWindowSize(ImVec2(menuW, menuH + 200.0f));
+    ImGui::SetNextWindowBgAlpha(0.0f);
+
+    ImGui::Begin("MainMenu", NULL, flags);
+        float buttonW = ImGui::GetContentRegionAvail().x; // This centers the buttons
+        
+        // RESTART
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.9f, 0.1f, 1.0f)); 
+        if (ImGui::Button("RESTART", ImVec2(buttonW, 60))) { currentState = GameState::RESTART; }
+        ImGui::PopStyleColor();
+        ImGui::Dummy(ImVec2(0, 10)); // sets spacing!
+        // REPLAY
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.5f, 0.3f, 1.0f));
+        if (ImGui::Button("REPLAY", ImVec2(buttonW, 60))) { currentState = GameState::QUIT; }
+        ImGui::PopStyleColor();
+        ImGui::Dummy(ImVec2(0, 10));
+        // QUIT
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.2f, 0.1f, 1.0f));
+        if (ImGui::Button("QUIT", ImVec2(buttonW, 60))) { currentState = GameState::QUIT; }
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar();
+    ImGui::End();
+}
+
