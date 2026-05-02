@@ -24,15 +24,17 @@ Game::Game() {
 	player.LoadTileset("player", 8);
 	ResourceManager::LoadSheet(renderer, "ship.bmp", "ship", 96, 64);
 	player.LoadTileset("ship", 8);
-	// ENEMIES & TRASH
+	// ENEMIES & TRASH & ALLIES
 	ResourceManager::LoadSheet(renderer, "enemy.bmp", "enemy", 16, 24);
 	ResourceManager::LoadSheet(renderer, "trash.bmp", "trash", 14, 9);
+    ResourceManager::LoadSheet(renderer, "ally.bmp", "ally", 96, 64);
 	// ICONS
 	ResourceManager::LoadTexture(renderer, "enemy_icon.bmp", "enemy_icon");
 	ResourceManager::LoadTexture(renderer, "trash_icon.bmp", "trash_icon");
 	// MENU
 	ResourceManager::LoadTexture(renderer, "background.bmp", "background");
 	ResourceManager::LoadTexture(renderer, "characters.bmp", "characters");
+	ResourceManager::LoadTexture(renderer, "game_over.bmp", "game_over");
 	
 	// HUD OVERLAY INITIALIZATION
 	ImGui::CreateContext();
@@ -47,8 +49,8 @@ Game::Game() {
 }
 
 Game::~Game() {
-	for (auto e : allEnemies) delete e;
-    for (auto t : allTrash) delete t;
+	for (auto e : allEntities) delete e;
+    allEntities.clear();
 	ImGui_ImplSDLRenderer_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
@@ -81,6 +83,11 @@ void Game::Run() {
         ImGui::NewFrame();
 
 		switch (currentState) {
+			case GameState::RESTART:
+				RestartGame();
+			case GameState::GAME_OVER:
+				hud.RenderGameOver(renderer, ScoreManager::Get(), ScoreManager::GetBest(), currentLevel, currentState);
+				break;
 			case GameState::MENU:
 				hud.RenderMenu(renderer, currentState, deltaTime);
 				break;
@@ -112,48 +119,65 @@ void Game::Run() {
 
 void Game::RenderAll() {
 	map.Draw(renderer, cam);
-	for (auto enemy : allEnemies) { 
-		float dist = glm::distance(player.position, enemy->position);
-		if (dist < SIGHT_RADIUS) {
-			float alphaRatio = 1.0f - (dist / SIGHT_RADIUS); 
-			Uint8 alpha = (Uint8)(alphaRatio * 255);
-			SDL_SetTextureAlphaMod(enemy->sprite.texture, alpha); // Tells SDL to make this texture transparent
-			enemy->Render(renderer, cam);
-			SDL_SetTextureAlphaMod(enemy->sprite.texture, 255); // Reset alpha to 255 so it doesn't affect other things using the same texture
-		}
+	int enemyCount = 0;
+    int trashCount = 0;
+	for (auto e : allEntities) {
+		if (!e->active) continue;
+        if (e->type == EntityType::ENEMY) {
+            enemyCount++;
+            float dist = glm::distance(player.position, e->position);
+            if (dist < SIGHT_RADIUS) {
+                float alphaRatio = 1.0f - (dist / SIGHT_RADIUS); 
+                Uint8 alpha = static_cast<Uint8>(alphaRatio * 255);
+                SDL_SetTextureAlphaMod(e->sprite.texture, alpha); 
+                e->Render(renderer, cam);
+                SDL_SetTextureAlphaMod(e->sprite.texture, 255); 
+            }
+        } 
+        else if (e->type == EntityType::TRASH) {
+            trashCount++;
+            e->Render(renderer, cam);
+        }
+        else {
+            e->Render(renderer, cam, 1);
+        }
 	}
-	for (auto trash : allTrash) { trash->Render(renderer, cam); }
 	player.Render(renderer, cam);
-	hud.Render(renderer, window, ScoreManager::Get(), currentLevel, allEnemies.size(), allTrash.size(), currentState);
+	hud.Render(renderer, window, ScoreManager::Get(), currentLevel, enemyCount, trashCount, currentState);
 }
 
 void Game::NextLevel() {
-	currentLevel++;
-    
-    for (auto e : allEnemies) delete e; // just in case
-    allEnemies.clear();
-    
-    int numEnemies = (currentLevel * 2) + 1;  // Level 1: 3 enemies. Level 2: 5 enemies. Level 3: 7...
-    float newSpeed = ENEMY_BASE_SPEED + (currentLevel * 20.0f); // Level 1: 100 speed. Level 2: 120 speed...
-	newSpeed = (newSpeed > 500.0f)? 500.0f : newSpeed; 
+    currentLevel++;
+    for (auto e : allEntities) delete e; 
+    allEntities.clear();
+    // Enemies
+    int numEnemies = (currentLevel * 2) + 1;  
+    float newSpeed = ENEMY_BASE_SPEED + (currentLevel * 20.0f); 
+	newSpeed = std::min(newSpeed, 500.0f); 
+    // Trash
+    int numTrash = (currentLevel / 5) + 2; 
+    float newTrashSpeed = TRASH_BASE_SPEED + (currentLevel * 5.0f); 
+	newTrashSpeed = std::min(newTrashSpeed, 500.0f); 
+    // Ally
+    int numAlly = (currentLevel / 5) + 2; 
 
 #ifdef DEBUG
-    std::cout << "Starting Level " << currentLevel << " with " << numEnemies << " enemies!" << std::endl;
+    std::cout << "Starting Level " << currentLevel << " with " << numEnemies << " enemies and " << numTrash << " trash!" << std::endl;
 #endif
 
     for(int i = 0; i < numEnemies; i++) {
         float rx, ry;
         int tile = -1;
 		int attempts = 0;
-        while (attempts < 100) { // Safety limit
+        while (attempts < 100) { 
             attempts++;
-            rx = rand() % ((int)(MAP_WIDTH * CELL_SIZE / 4) - CELL_SIZE) + CELL_SIZE; 
-            ry = rand() % ((MAP_HEIGHT * CELL_SIZE - CELL_SIZE)); 
+            rx = rand() % (static_cast<int>(MAP_WIDTH * CELL_SIZE / 4) - CELL_SIZE) + CELL_SIZE; 
+            ry = rand() % (MAP_HEIGHT * CELL_SIZE - CELL_SIZE); 
             tile = map.GetTile(rx, ry);
-            if (tile >= 0 && tile <= 3) { // Is it sand?
+            if (tile >= 0 && tile <= 3) { 
                 bool tooClose = false;
-                for (auto other : allEnemies) { // Checks distance to all ALREADY SPAWNED enemies
-                    if (glm::distance(glm::vec2(rx, ry), other->position) < 50.0f) {
+                for (auto other : allEntities) { 
+                    if (other->type == EntityType::ENEMY && glm::distance(glm::vec2(rx, ry), other->position) < 50.0f) {
                         tooClose = true;
                         break;
                     }
@@ -161,11 +185,28 @@ void Game::NextLevel() {
                 if (!tooClose) break; 
             }
         }
-        Behavior b = (i % 2 == 0) ? Behavior::KAMIKAZE : Behavior::RUNNER; // Randomly picks behaviour
-		// ResourceManager::GetSprite("trash_0") is a dummy variable it gets overwritten instantly
+        Behavior b = (i % 2 == 0) ? Behavior::KAMIKAZE : Behavior::RUNNER; 
+        // esentially we make a dummy sprite (trash_0) as I implemented this very poorly and needs some kind of sprite to work
 		Enemy* newEnemy = new Enemy(glm::vec2(rx, ry), ResourceManager::GetSprite("trash_0"), b, newSpeed); 
-		newEnemy->LoadTileset("enemy", 8); 	
-		allEnemies.push_back(newEnemy);			
+		newEnemy->LoadTileset("enemy", 8); // this overwrites the dummy variable entirely
+		allEntities.push_back(newEnemy);			
+    }
+
+	for (int i = 0; i < numTrash; i++) {
+		float rx, ry;
+        rx = rand() % ((MAP_WIDTH * CELL_SIZE) / 2 - 480) + 480; 
+        ry = rand() % (MAP_HEIGHT * CELL_SIZE - CELL_SIZE); 
+        Trash* t = new Trash(glm::vec2(rx, ry), ResourceManager::GetSprite("trash_0"), newTrashSpeed);
+        allEntities.push_back(t); 
+	}
+
+    for (int i = 0; i < numAlly; i++) {
+        float rx, ry;
+        rx = rand() % ((MAP_WIDTH * CELL_SIZE - 2 * CELL_SIZE) - 480) + 480; 
+        ry = rand() % (MAP_HEIGHT * CELL_SIZE - CELL_SIZE); 
+        Ally* newAlly = new Ally(glm::vec2(rx, ry), ResourceManager::GetSprite("trash_0")); 
+		newAlly->LoadTileset("ally", 8); 	
+		allEntities.push_back(newAlly);	
     }
 }
 
@@ -173,22 +214,41 @@ void Game::NextLevel() {
 void Game::Update(float deltaTime) {
 	int tileID = map.GetTile(player.position.x, player.position.y);
 	player.Update(tileID, deltaTime);
-	for (auto enemy : allEnemies) {
-		glm::vec2 lookDir(0, 0);
-        if (glm::length(enemy->velocity) > 0.1f) lookDir = glm::normalize(enemy->velocity) * 30.0f;
-        int tileInFront = map.GetTile(enemy->position.x + lookDir.x, enemy->position.y + lookDir.y);
-		enemy->Update(deltaTime, player.position, tileInFront);
+    std::vector<Entity*> spawnList; // temporary list to prevent vector corruption
+    int enemyCount = 0;
+	for (auto e : allEntities) {
+        if (!e->active) continue;
+        if (e->type == EntityType::ENEMY) {
+            enemyCount++;
+            Enemy* enemy = static_cast<Enemy*>(e);
 
-		if (enemy->dropTrashFlag) { // If enemy signals it wants to drop trash
-			float newSpeed = TRASH_BASE_SPEED + (currentLevel * 10.0f);
-			newSpeed = (newSpeed > 500.0f)? 500.0f : newSpeed; 
-			allTrash.push_back(new Trash(enemy->position, ResourceManager::GetSprite("trash_0"), newSpeed));
-			enemy->dropTrashFlag = false;
+            glm::vec2 lookDir(0, 0);
+            if (glm::length(enemy->velocity) > 0.1f) lookDir = glm::normalize(enemy->velocity) * 30.0f;
+            int tileInFront = map.GetTile(enemy->position.x + lookDir.x, enemy->position.y + lookDir.y);
+            
+            enemy->Update(deltaTime, player.position, tileInFront);
+
+            if (enemy->dropTrashFlag) { 
+                float newSpeed = TRASH_BASE_SPEED + (currentLevel * 10.0f);
+                newSpeed = std::min(newSpeed, 500.0f); 
+
+                spawnList.push_back(new Trash(enemy->position, ResourceManager::GetSprite("trash_0"), newSpeed));
+                enemy->dropTrashFlag = false;
+            }
+        } 
+        else if (e->type == EntityType::ALLY) {
+			Ally* ally = static_cast<Ally*>(e);
+            ally->Update(deltaTime); 
+        } else if (e->type == EntityType::TRASH) {
+			Trash* trash = static_cast<Trash*>(e);
+			trash->Update(deltaTime);
 		}
 	}
-	for (auto trash : allTrash) { trash->Update(deltaTime); }
+    for (auto s : spawnList) allEntities.push_back(s); // Merge spawned items back into the main list safely
 	HandleCollisions();
-	if (allEnemies.empty()) { NextLevel(); }
+	if (enemyCount == 0) { NextLevel(); }
+	if (ScoreManager::Get() < 0) { currentState = GameState::GAME_OVER; }
+
 }
 
 
@@ -210,39 +270,93 @@ void Game::HandleCamera(float deltaTime, int windowWidth, int windowHeight) {
 
 void Game::HandleCollisions() {
 	float playerRadius = CELL_SIZE;
-	/* HANDLES TRASH TO PLAYER COLLISON */
-    for (auto t : allTrash) { 
-        if (!t->active) continue;
-        float dist = glm::distance(player.position, t->position);
-        if (dist < playerRadius + 15.0f) {
-            t->active = false;  
-            ScoreManager::Add(TRASH_POINTS);
-        }
-    }
-	/* HANDLES PLAYER TO ENEMY COLLISON */
-    for (auto e : allEnemies) { 
+	for (auto e : allEntities) { 
         if (!e->active) continue;
         float dist = glm::distance(player.position, e->position);
-        float hitRadius = CELL_SIZE;
 
-        if (dist < hitRadius) {
-            e->active = false;      
-            ScoreManager::Add(ENEMY_POINTS);
+        if (e->type == EntityType::ALLY) {
+            if (dist < playerRadius + 15.0f) {
+                e->active = false;  
+                ScoreManager::Add(-ALLY_POINTS_PENALTY);
+            }
+            for (auto t : allEntities) {
+                if (!t->active) continue;
+                if (t->type == EntityType::TRASH) {
+                    float dist = glm::distance(e->position, t->position);
+                    if (dist < playerRadius) { t->active = false; ScoreManager::Add(ALLY_TRASH_POINTS); }
+                }
+            }
+        }
+        else if (e->type == EntityType::TRASH) {
+            if (dist < playerRadius + 15.0f) {
+                e->active = false;  
+                ScoreManager::Add(TRASH_POINTS);
+            }
+        }
+        else if (e->type == EntityType::ENEMY) {
+            Enemy* enemy = static_cast<Enemy*>(e);
+            if (dist < playerRadius - 5.0f) {
+                if (enemy->invincible) {
+                    currentState = GameState::GAME_OVER;
+                } else {
+                    e->active = false;      
+                    ScoreManager::Add(ENEMY_POINTS);
+                }
+            }
+        }
+	}
+	/* HANDLES ENEMY TO ENEMY KILL DETECTION */
+    for (size_t i = 0; i < allEntities.size(); i++) {
+        for (size_t j = i + 1; j < allEntities.size(); j++) {
+            Entity* a = allEntities[i];
+            Entity* b = allEntities[j];
+
+            if (a->type != EntityType::ENEMY || b->type != EntityType::ENEMY) continue;
+            if (!a->active || !b->active) continue;
+
+            Enemy* eA = static_cast<Enemy*>(a);
+            Enemy* eB = static_cast<Enemy*>(b);
+
+            if (eA->invincible || eB->invincible) continue; 
+            if (eA->cooldownTimer > 0 || eB->cooldownTimer > 0) continue;
+
+            float dist = glm::distance(eA->position, eB->position);
+            float minDist = 25.0f; 
+
+            if (dist < minDist) {
+                eA->invincible = true;
+                eB->invincible = true;
+                eA->invincibilityTimer = INVINCIBILITY_DURATION;
+                eB->invincibilityTimer = INVINCIBILITY_DURATION;
+            	eA->velocity = glm::vec2(0, 0); 
+                eB->velocity = glm::vec2(0, 0);
+            }
         }
     }
 }
 
 void Game::HandleCleanUp() {
-    for (int i = (int)allTrash.size() - 1; i >= 0; i--) {
-        if (!allTrash[i]->active) {
-            delete allTrash[i]; // Free memory
-            allTrash.erase(allTrash.begin() + i); // Remove from list
+	for (int i = static_cast<int>(allEntities.size()) - 1; i >= 0; i--) {
+        if (!allEntities[i]->active) {
+            delete allEntities[i]; 
+            allEntities.erase(allEntities.begin() + i); 
         }
     }
-    for (int i = (int)allEnemies.size() - 1; i >= 0; i--) {
-        if (!allEnemies[i]->active) {
-            delete allEnemies[i]; // Free memory
-            allEnemies.erase(allEnemies.begin() + i); // Remove from list
-        }
-    }
+}
+
+void Game::RestartGame() {
+	for (auto e : allEntities) delete e; allEntities.clear();
+	float rx = rand() % ((int)(MAP_WIDTH * CELL_SIZE / 4) - CELL_SIZE) + CELL_SIZE; 
+    float ry = rand() % ((MAP_HEIGHT * CELL_SIZE - CELL_SIZE)); 
+    player.position = glm::vec2(rx, ry); 
+    player.velocity = glm::vec2(0.0f, 0.0f);
+	
+    player.sizeMultiplier = 2; // questionable?
+    cam = glm::vec2(0.0f, 0.0f); 
+    zoom = BASE_ZOOM * 2; // already starts zoomed in questionable?
+
+    ScoreManager::Reset();
+    currentLevel = 0;
+    NextLevel(); 
+    currentState = GameState::GAME;
 }

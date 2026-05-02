@@ -11,6 +11,7 @@
 #include "MapManager.h"
 #include "Enemy.h"
 #include "Trash.h"
+#include "Ally.h"
 
 
 class Game
@@ -25,14 +26,14 @@ public:
     void HandleCamera(float deltaTime, int windowWidth, int windowHeight);
     void HandleCollisions();
     void HandleCleanUp();
+    void RestartGame();
 private: 
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
     Player player;
     MapManager map;
     HUD hud;
-    std::vector<Enemy*> allEnemies;
-    std::vector<Trash*> allTrash;
+    std::vector<Entity*> allEntities;
     float zoom = 1.0f;
     glm::vec2 cam{0.0f, 0.0f};
     bool quit = false;
