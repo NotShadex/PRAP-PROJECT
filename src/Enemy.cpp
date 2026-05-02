@@ -1,8 +1,9 @@
 #include "Enemy.h"
 
 
-Enemy::Enemy(glm::vec2 pos, Sprite s, Behavior b, float startSpeed) : Entity(pos, s), type(b), speed(startSpeed) {
-        velocity = glm::vec2(ENEMY_BASE_SPEED, ENEMY_BASE_SPEED); // Default speed
+Enemy::Enemy(glm::vec2 pos, Sprite s, Behavior b, float startSpeed) : Entity(pos, s), behavior(b), speed(startSpeed) {
+    velocity = glm::vec2(ENEMY_BASE_SPEED, ENEMY_BASE_SPEED); // Default speed
+    type = EntityType::ENEMY;
 }
 
 void Enemy::ChangeDirection() {
@@ -11,12 +12,33 @@ void Enemy::ChangeDirection() {
     velocity = glm::vec2(rx, ry); 
 }
 
+void Enemy::Render(SDL_Renderer *renderer, glm::vec2 cam, int sizeMulti) {
+    if (invincible) {
+        SDL_SetTextureColorMod(sprite.texture, 255, 0, 0);
+    }
+    Entity::Render(renderer, cam); // we call the parent function Render
+    // RESET the color immediately so the next enemy is not colored as well!
+    SDL_SetTextureColorMod(sprite.texture, 255, 255, 255); 
+}
+
 void Enemy::Update(float deltaTime, glm::vec2 playerPos, int tileInFront) {
+    if (invincible) {
+        invincibilityTimer -= deltaTime;
+        if (invincibilityTimer <= 0) {
+            invincible = false;
+            cooldownTimer = INVINCIBILITY_COOLDOWN; // Start the "don't pair again" timer
+            ChangeDirection(); // Get moving again
+        }
+        return; // Invincible enemies don't
+    }
+    if (cooldownTimer > 0) {
+        cooldownTimer -= deltaTime;
+    }
     if (tileInFront > 3) {
         position.x -= ENEMY_BASE_SPEED * 100.0f * deltaTime; // if it were to happen quickly scuttles over to the sand tiles
     }
 
-    if (type == Behavior::KAMIKAZE) {
+    if (behavior == Behavior::KAMIKAZE) {
         float currentSpeed = speed;
         if (tileInFront > 3 || tileInFront == -1) {
             ChangeDirection();
@@ -25,7 +47,7 @@ void Enemy::Update(float deltaTime, glm::vec2 playerPos, int tileInFront) {
         position += velocity * speed * deltaTime;
     } 
 
-    else if (type == Behavior::RUNNER) {
+    else if (behavior == Behavior::RUNNER) {
         float currentSpeed = tileReached ? (speed * 2.0f) : speed; // moves faster when it gets rid of trash kinda makes sense?
         float distanceToPlayer = glm::distance(position, playerPos);
         
