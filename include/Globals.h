@@ -5,7 +5,9 @@ enum GameState
     MENU,
     GAME,
     QUIT,
-    SETTINGS
+    SETTINGS,
+    GAME_OVER,
+    RESTART
 };
 // SCREEN
 #define WIDTH 1280 // better name would be GAME_WIDTH but I can't be bothered to refactor everything...
@@ -35,8 +37,14 @@ enum DIRECTIONS {
 #define FEAR_RADIUS 100
 #define ENEMY_BASE_SPEED 100.0f
 #define DROP_COOLDOWN 7
+#define INVINCIBILITY_COOLDOWN 14
+#define INVINCIBILITY_DURATION 2
 #define ENEMY_POINTS 50
 // TRASH
 #define TRASH_BASE_SPEED 50.0f
 #define TRASH_POINTS 20
 #define TRASH_POINTS_PENALTY 30
+// ALLIES
+#define ALLY_BASE_SPEED 100.0f
+#define ALLY_POINTS_PENALTY 50
+#define ALLY_TRASH_POINTS 10
