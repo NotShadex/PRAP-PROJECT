@@ -9,6 +9,7 @@ public: // I like to seperate variables from the functions in classes I think th
 public:
     Trash(glm::vec2 pos, Sprite s, float startSpeed) : Entity(pos, s), speed(startSpeed) {
         velocity = glm::vec2(1.0f, 0.0f); // set the x speed to 1 since we multiply it by speed (and it floats to the right)
+        type = EntityType::TRASH;
     }
 
     void Update(float deltaTime) { 
