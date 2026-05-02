@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <glm/glm.hpp>
 #include "ResourceManager.h"
+#include <vector> // if I don't have this then it don't work in linuh
 
 class Player
 {
