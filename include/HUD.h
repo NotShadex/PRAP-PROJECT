@@ -15,7 +15,7 @@ class HUD
 {
 private:
     std::vector<Resolution> resolutions = {
-        {640, 480, "640x480"},
+        {640, 360, "640x360"},
         {1280, 720, "1280x720"},
         {1600, 900, "1600x900"},
         {1920, 1080, "1920x1080"},
@@ -31,6 +31,7 @@ public:
     void DrawIcon(SDL_Renderer* renderer, const std::string& name, int x, int y, int size);
     void ApplyResolution(SDL_Window* window, int width, int height);
     void RenderMenu(SDL_Renderer* renderer, GameState& currentState, float deltaTime); 
+    void RenderGameOver(SDL_Renderer* renderer, int score, int bestScore, int level, GameState& currentState);
 public:
     int iconSizeMultiplier = 5;
     int currentWindowWidth = WIDTH;
