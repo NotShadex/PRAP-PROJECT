@@ -12,10 +12,23 @@
 #include "Enemy.h"
 #include "Trash.h"
 #include "Ally.h"
+#include "ReplayManager.h"
 
 
-class Game
-{
+class Game {
+private: 
+    SDL_Window* window = nullptr;
+    SDL_Renderer* renderer = nullptr;
+    Player player;
+    MapManager map;
+    Replay replay;
+    HUD hud;
+    std::vector<Entity*> allEntities;
+    float zoom = 1.0f;
+    glm::vec2 cam{0.0f, 0.0f};
+    bool quit = false;
+    int currentLevel = 0;
+    GameState currentState = GameState::MENU;
 public:
     Game();
     ~Game();
@@ -27,17 +40,5 @@ public:
     void HandleCollisions();
     void HandleCleanUp();
     void RestartGame();
-private: 
-    SDL_Window* window = nullptr;
-    SDL_Renderer* renderer = nullptr;
-    Player player;
-    MapManager map;
-    HUD hud;
-    std::vector<Entity*> allEntities;
-    float zoom = 1.0f;
-    glm::vec2 cam{0.0f, 0.0f};
-    bool quit = false;
-    int currentLevel = 0;
-    GameState currentState = GameState::MENU;
 };
 

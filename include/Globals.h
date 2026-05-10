@@ -1,13 +1,13 @@
 #pragma once
 // GAME STATES
-enum GameState 
-{
+enum GameState {
     MENU,
     GAME,
     QUIT,
     SETTINGS,
     GAME_OVER,
-    RESTART
+    RESTART,
+    REPLAY
 };
 // SCREEN
 #define WIDTH 1280 // better name would be GAME_WIDTH but I can't be bothered to refactor everything...
