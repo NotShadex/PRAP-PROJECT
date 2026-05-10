@@ -15,6 +15,8 @@ Game::Game() {
 	renderer = SDL_CreateRenderer(window, -1, 0);
 	// RANDOM SEED
 	srand(time(NULL)); 
+    // GET NAME FROM FILE
+    hud.LoadName();
 
 	// MAP CREATION
 	ResourceManager::LoadSheet(renderer, "tileset.bmp", "tile", 16, 16);
@@ -80,11 +82,12 @@ void Game::Run() {
 		SDL_RenderClear(renderer);
         ImGui_ImplSDLRenderer_NewFrame();
         ImGui_ImplSDL2_NewFrame();
-        ImGui::NewFrame();
+        ImGui::NewFrame(); 
 
 		switch (currentState) {
 			case GameState::RESTART:
 				RestartGame();
+                break;
 			case GameState::GAME_OVER:
 				hud.RenderGameOver(renderer, ScoreManager::Get(), ScoreManager::GetBest(), currentLevel, currentState);
 				break;
@@ -95,7 +98,7 @@ void Game::Run() {
 				hud.RenderMenu(renderer, currentState, deltaTime); // still render menu even though we are in settings
 				hud.RenderSettings(window, currentState); // ImGui is so smart that it knows that the windows that is active out-prioritizes the buttons behind!
 				break;
-			case GameState::GAME:
+			case GameState::GAME: {
 				/* PLAYER MOVEMENT */
 				const Uint8* keys = SDL_GetKeyboardState(NULL); 
 				glm::vec2 input(0.0f, 0.0f);
@@ -108,7 +111,34 @@ void Game::Run() {
 				Update(deltaTime);
 				RenderAll();
 				HandleCleanUp();
-				break;
+            }
+			break;
+            case GameState::REPLAY: {
+                if (replay.currentFrame < replay.replayArr.size()) {
+                    ReplayFrame& f = replay.replayArr[replay.currentFrame];
+                    player.position = glm::vec2(f.x, f.y);
+                    
+                    if (f.spriteIndex < player.spriteSheet.size()) {
+                        player.sprite = player.spriteSheet[f.spriteIndex];
+                        if (f.spriteIndex < 8) {
+                            player.sizeMultiplier = 2; 
+                        } else {
+                            player.sizeMultiplier = 1;
+                        }
+                    }
+
+                    replay.currentFrame++;
+                    
+                    HandleCamera(deltaTime, hud.currentWindowWidth, hud.currentWindowHeight);
+                    hud.RenderReplay(renderer, currentState);
+                    RenderAll(); 
+                } 
+                else {
+                    currentState = GameState::GAME_OVER;
+                    replay.currentFrame = 0;
+                }
+            }
+            break;
 		}
 		SDL_RenderSetScale(renderer, 1.0f, 1.0f); // just in case so that menus are scaled correctly
         ImGui::Render();
@@ -119,31 +149,34 @@ void Game::Run() {
 
 void Game::RenderAll() {
 	map.Draw(renderer, cam);
-	int enemyCount = 0;
+    int enemyCount = 0;
     int trashCount = 0;
-	for (auto e : allEntities) {
-		if (!e->active) continue;
-        if (e->type == EntityType::ENEMY) {
-            enemyCount++;
-            float dist = glm::distance(player.position, e->position);
-            if (dist < SIGHT_RADIUS) {
-                float alphaRatio = 1.0f - (dist / SIGHT_RADIUS); 
-                Uint8 alpha = static_cast<Uint8>(alphaRatio * 255);
-                SDL_SetTextureAlphaMod(e->sprite.texture, alpha); 
+    if (currentState != GameState::REPLAY) {
+        for (auto e : allEntities) {
+            if (!e->active) continue;
+            if (e->type == EntityType::ENEMY) {
+                enemyCount++;
+                float dist = glm::distance(player.position, e->position);
+                if (dist < SIGHT_RADIUS) {
+                    float alphaRatio = 1.0f - (dist / SIGHT_RADIUS); 
+                    Uint8 alpha = static_cast<Uint8>(alphaRatio * 255);
+                    SDL_SetTextureAlphaMod(e->sprite.texture, alpha); 
+                    e->Render(renderer, cam);
+                    SDL_SetTextureAlphaMod(e->sprite.texture, 255); 
+                }
+            } 
+            else if (e->type == EntityType::TRASH) {
+                trashCount++;
                 e->Render(renderer, cam);
-                SDL_SetTextureAlphaMod(e->sprite.texture, 255); 
             }
-        } 
-        else if (e->type == EntityType::TRASH) {
-            trashCount++;
-            e->Render(renderer, cam);
+            else {
+                e->Render(renderer, cam, 1);
+            }
         }
-        else {
-            e->Render(renderer, cam, 1);
-        }
-	}
+    }
 	player.Render(renderer, cam);
-	hud.Render(renderer, window, ScoreManager::Get(), currentLevel, enemyCount, trashCount, currentState);
+    if (currentState != GameState::REPLAY) 
+        hud.Render(renderer, window, ScoreManager::Get(), currentLevel, enemyCount, trashCount, currentState);
 }
 
 void Game::NextLevel() {
@@ -214,6 +247,8 @@ void Game::NextLevel() {
 void Game::Update(float deltaTime) {
 	int tileID = map.GetTile(player.position.x, player.position.y);
 	player.Update(tileID, deltaTime);
+    // REPLAY - saves the frame to the list 
+    replay.SaveFrame(player.position, player.GetSpriteIndex(player.tile));
     std::vector<Entity*> spawnList; // temporary list to prevent vector corruption
     int enemyCount = 0;
 	for (auto e : allEntities) {
@@ -225,7 +260,8 @@ void Game::Update(float deltaTime) {
             glm::vec2 lookDir(0, 0);
             if (glm::length(enemy->velocity) > 0.1f) lookDir = glm::normalize(enemy->velocity) * 30.0f;
             int tileInFront = map.GetTile(enemy->position.x + lookDir.x, enemy->position.y + lookDir.y);
-            
+            if (enemy->invincible && tileID > 3) { enemy->velocity = glm::vec2(0.0f, 0.0f); } // if player is on water invincible enemies won't follow
+
             enemy->Update(deltaTime, player.position, tileInFront);
 
             if (enemy->dropTrashFlag) { 
@@ -247,16 +283,22 @@ void Game::Update(float deltaTime) {
     for (auto s : spawnList) allEntities.push_back(s); // Merge spawned items back into the main list safely
 	HandleCollisions();
 	if (enemyCount == 0) { NextLevel(); }
-	if (ScoreManager::Get() < 0) { currentState = GameState::GAME_OVER; }
-
+	if (ScoreManager::Get() < 0) { 
+        ScoreManager::SaveFinalScore(hud.GetPlayerName());
+        replay.SaveReplay(); replay.LoadReplay();
+        currentState = GameState::GAME_OVER; 
+    }
 }
 
 
 void Game::HandleCamera(float deltaTime, int windowWidth, int windowHeight) {
 	float targetZoom = (player.sizeMultiplier == 2) ? BASE_ZOOM * 2 : BASE_ZOOM;
 	float diff = targetZoom - zoom;
-	if (std::abs(diff) < 0.01f) { zoom = targetZoom; } // If diff is smaller than 0.01 SNAP to the target
-	else { zoom += diff * ZOOM_SPEED * deltaTime; } // keep on zoomin'
+	if (std::abs(diff) < 0.01f) { // If diff is smaller than 0.01 SNAPS to the target
+        zoom = targetZoom; 
+    } else { 
+        zoom += diff * ZOOM_SPEED * deltaTime; // keeps on zoomin'
+    } 
 	zoom = glm::clamp(zoom, BASE_ZOOM, BASE_ZOOM * 2); // just in case
 	SDL_RenderSetScale(renderer, zoom, zoom);
 	// Camera border control just simple if checks
@@ -297,6 +339,8 @@ void Game::HandleCollisions() {
             Enemy* enemy = static_cast<Enemy*>(e);
             if (dist < playerRadius - 5.0f) {
                 if (enemy->invincible) {
+                    ScoreManager::SaveFinalScore(hud.GetPlayerName());
+                    replay.SaveReplay(); replay.LoadReplay();
                     currentState = GameState::GAME_OVER;
                 } else {
                     e->active = false;      
@@ -328,8 +372,15 @@ void Game::HandleCollisions() {
                 eB->invincible = true;
                 eA->invincibilityTimer = INVINCIBILITY_DURATION;
                 eB->invincibilityTimer = INVINCIBILITY_DURATION;
-            	eA->velocity = glm::vec2(0, 0); 
-                eB->velocity = glm::vec2(0, 0);
+                bool isStalker = (rand() % 100 < 40);
+                if (isStalker) {
+                    eA->speed *= 0.5f; 
+                    eB->speed *= 0.5f;
+                } else {
+                    eA->velocity = glm::vec2(0, 0); 
+                    eB->velocity = glm::vec2(0, 0);
+                }
+            	
             }
         }
     }
@@ -345,6 +396,7 @@ void Game::HandleCleanUp() {
 }
 
 void Game::RestartGame() {
+    replay.ClearRecording();
 	for (auto e : allEntities) delete e; allEntities.clear();
 	float rx = rand() % ((int)(MAP_WIDTH * CELL_SIZE / 4) - CELL_SIZE) + CELL_SIZE; 
     float ry = rand() % ((MAP_HEIGHT * CELL_SIZE - CELL_SIZE)); 
