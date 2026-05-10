@@ -22,22 +22,26 @@ void Enemy::Render(SDL_Renderer *renderer, glm::vec2 cam, int sizeMulti) {
 }
 
 void Enemy::Update(float deltaTime, glm::vec2 playerPos, int tileInFront) {
+    if (tileInFront > 3) {
+        position.x -= ENEMY_BASE_SPEED * 100.0f * deltaTime; // if it were to happen quickly scuttles over to the sand tiles
+    }
     if (invincible) {
+        if (glm::length(velocity) > 0) { 
+            glm::vec2 dir = glm::normalize(playerPos - position);
+            position += dir * speed * deltaTime;
+        }
         invincibilityTimer -= deltaTime;
         if (invincibilityTimer <= 0) {
             invincible = false;
-            cooldownTimer = INVINCIBILITY_COOLDOWN; // Start the "don't pair again" timer
-            ChangeDirection(); // Get moving again
+            cooldownTimer = INVINCIBILITY_COOLDOWN; // Starts the cooldown for "pairing"
+            ChangeDirection(); // keep er going
         }
-        return; // Invincible enemies don't
+        return; 
     }
     if (cooldownTimer > 0) {
         cooldownTimer -= deltaTime;
     }
-    if (tileInFront > 3) {
-        position.x -= ENEMY_BASE_SPEED * 100.0f * deltaTime; // if it were to happen quickly scuttles over to the sand tiles
-    }
-
+    
     if (behavior == Behavior::KAMIKAZE) {
         float currentSpeed = speed;
         if (tileInFront > 3 || tileInFront == -1) {
