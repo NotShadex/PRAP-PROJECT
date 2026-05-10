@@ -6,12 +6,12 @@
 enum EntityType {
     ENEMY,
     ALLY,
-    TRASH
+    TRASH,
+    PLAYER
 };
 
-class Entity 
-{
-public: // probably it would be better to use protected but there are some varaibles taht NEED to be public
+class Entity {
+public: // probably it would be better to use protected but there are some varaibles that NEED to be public
     glm::vec2 position;
     glm::vec2 velocity;
     Sprite sprite;

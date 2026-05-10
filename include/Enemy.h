@@ -7,8 +7,7 @@
 
 enum class Behavior { KAMIKAZE, RUNNER };
 
-class Enemy : public Entity 
-{
+class Enemy : public Entity {
 private:
     int index = 0;
     std::vector<Sprite> spriteSheet;

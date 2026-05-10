@@ -5,8 +5,7 @@
 #include <vector>
 #include <iostream>
 
-class Ally : public Entity 
-{
+class Ally : public Entity {
 private:
     int index = 0;
     std::vector<Sprite> spriteSheet;
