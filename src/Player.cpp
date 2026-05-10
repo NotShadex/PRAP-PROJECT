@@ -4,8 +4,9 @@
 #include <SDL.h>
 
 
-Player::Player() 
+Player::Player() : Entity(glm::vec2(0, 0), Sprite())
 {
+    type = EntityType::PLAYER;
     srand(time(NULL));
     float rx = rand() % ((int)(MAP_WIDTH * CELL_SIZE / 4) - CELL_SIZE) + CELL_SIZE; 
     float ry = rand() % ((MAP_HEIGHT * CELL_SIZE - CELL_SIZE)); 
@@ -32,8 +33,8 @@ void Player::Update(int tileUnder, float deltaTime)
     position += velocity * deltaTime;
 
     /* BORDER CONTROL haha */
-    float halfW = (currSprite.sourceRect.w * sizeMultiplier) / 2.0f; 
-    float halfH = (currSprite.sourceRect.h * sizeMultiplier) / 3.0f; 
+    float halfW = (sprite.sourceRect.w * sizeMultiplier) / 2.0f; 
+    float halfH = (sprite.sourceRect.h * sizeMultiplier) / 3.0f; 
     if (position.x < halfW) position.x = halfW;
     if (position.x > (MAP_WIDTH * CELL_SIZE) - halfW) position.x = (MAP_WIDTH * CELL_SIZE) - halfW;
     if (position.y < halfH) position.y = halfH;
@@ -50,13 +51,17 @@ void Player::Update(int tileUnder, float deltaTime)
     else if (velocity.x < 0.0f) { index = LEFT; } 
     else if (velocity.y < 0.0f) { index = UP; } 
     else if (velocity.y > 0.0f) { index = DOWN; } 
+    
+    sizeMultiplier = (tileUnder >= 0 && tileUnder < 4)? 2 : 1;
+    sprite = spriteSheet[GetSpriteIndex(tileUnder)];
+    tile = tileUnder; 
+}
 
+int Player::GetSpriteIndex(int tileUnder) {
+    /* This is a helper function for the player update logic keeps the code cleaner */
     // If the tile under the player is water [ 3 < x ] change the offset of the vector so it matches the ship index
     int spriteOffset = (tileUnder >= 0 && tileUnder < 4)? 0 : 8; 
-    sizeMultiplier = (tileUnder >= 0 && tileUnder < 4)? 2 : 1;
-    int currSpriteIndex = spriteOffset + index;
-    currSprite = spriteSheet[currSpriteIndex];
-    tile = tileUnder; 
+    return spriteOffset + index;
 }
 
 void Player::LoadTileset(const std::string &prefix, int count)
@@ -67,18 +72,18 @@ void Player::LoadTileset(const std::string &prefix, int count)
         spriteSheet.push_back(s);
     }
     if (!spriteSheet.empty()) { // edge case
-        currSprite = spriteSheet[0];
+        sprite = spriteSheet[0];
     }
 }
 
 void Player::Render(SDL_Renderer* renderer, glm::vec2 cam)
 {
-    int w = currSprite.sourceRect.w * sizeMultiplier; // we have to account for sprite scaling we apply!
-    int h = currSprite.sourceRect.h * sizeMultiplier;
+    int w = sprite.sourceRect.w * sizeMultiplier; // we have to account for sprite scaling we apply!
+    int h = sprite.sourceRect.h * sizeMultiplier;
     SDL_Rect playerRect = { (int)(position.x - (w / 2) - cam.x), 
                             (int)(position.y - (h / 2) - cam.y), 
                             w, 
                             h 
                         }; 
-    SDL_RenderCopy(renderer, currSprite.texture, &currSprite.sourceRect, &playerRect);
+    SDL_RenderCopy(renderer, sprite.texture, &sprite.sourceRect, &playerRect);
 }
