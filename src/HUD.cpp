@@ -1,10 +1,13 @@
 #include "HUD.h"
 #include "ResourceManager.h"
+#include "ScoreManager.h"
 #include <iostream>
+#include <fstream>
 
 extern int currentWindowWidth;
 extern int currentWindowHeight;
 
+/* -------------------- HUD RENDER FUNCTIONS -------------------- */
 void HUD::Render(SDL_Renderer* renderer, SDL_Window* window, int score, int level, int enemyCount, int trashCount, GameState& currentState, int iconMultiplier) {
     SDL_RenderSetScale(renderer, 1.0f, 1.0f); // REMOVES SCALING ON THE IMGUI MENU VERY IMPORTANT!
     iconSizeMultiplier = iconMultiplier;
@@ -14,11 +17,11 @@ void HUD::Render(SDL_Renderer* renderer, SDL_Window* window, int score, int leve
 }
 
 
+/* -------------------- HUD HELPER FUNCTIONS -------------------- */
 void HUD::RenderIcons(SDL_Renderer* renderer) {
     DrawIcon(renderer, "enemy_icon", 20, 20, 16);
     DrawIcon(renderer, "trash_icon", 20, 116, 16);
 }
-
 
 void HUD::DrawIcon(SDL_Renderer* renderer, const std::string& name, int x, int y, int size) {
     SDL_Texture* tex = ResourceManager::GetTexture(name);
@@ -27,17 +30,6 @@ void HUD::DrawIcon(SDL_Renderer* renderer, const std::string& name, int x, int y
         SDL_RenderCopy(renderer, tex, NULL, &dest);
     }
 }
-
-
-void HUD::ApplyResolution(SDL_Window* window, int width, int height) {
-    SDL_SetWindowSize(window, width, height);
-    SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-    currentWindowWidth = width;
-    currentWindowHeight = height;
-    ImGuiIO& io = ImGui::GetIO();
-    io.DisplaySize = ImVec2(width, height);
-}
-
 
 void HUD::RenderText(int score, int level, int enemyCount, int trashCount) {
     // Flags for an invisible, non-interactive window
@@ -77,9 +69,28 @@ void HUD::RenderText(int score, int level, int enemyCount, int trashCount) {
     ImGui::Begin("Level", NULL, flags);
         ImGui::Text("LEVEL: %d", level);
     ImGui::End();
+
+    // PLAYER NAME
+    ImGui::SetNextWindowPos(ImVec2(10, currentWindowHeight - 60)); // bottom-left
+    ImGui::SetNextWindowBgAlpha(0.0f);
+    ImGui::Begin("PlayerInfo", NULL, flags);
+        ImGui::Text("PLAYER: %s", playerName);
+    ImGui::End();
 }
 
 
+/*-------------------- RESOLUTION -------------------- */
+void HUD::ApplyResolution(SDL_Window* window, int width, int height) {
+    SDL_SetWindowSize(window, width, height);
+    SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    currentWindowWidth = width;
+    currentWindowHeight = height;
+    ImGuiIO& io = ImGui::GetIO();
+    io.DisplaySize = ImVec2(width, height);
+}
+
+
+/* -------------------- MENUS -------------------- */
 void HUD::RenderSettings(SDL_Window *window, GameState& currentState) {
     if (!showSettings) return;
     // Makes the window even smaller in lower resolutions (640x480)
@@ -122,9 +133,7 @@ void HUD::RenderSettings(SDL_Window *window, GameState& currentState) {
     ImGui::End();
 }
 
-
 void HUD::RenderMenu(SDL_Renderer* renderer, GameState& currentState, float deltaTime) {
-    static char playerName[64] = "";
     static float time = 0.0f;
     // Main Menu Background Setup
     SDL_Texture* bg = ResourceManager::GetTexture("background");
@@ -156,7 +165,7 @@ void HUD::RenderMenu(SDL_Renderer* renderer, GameState& currentState, float delt
 
         // START
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.9f, 0.1f, 1.0f)); 
-        if (ImGui::Button("START", ImVec2(buttonW, 60))) { currentState = GameState::GAME; }
+        if (ImGui::Button("START", ImVec2(buttonW, 60))) { currentState = GameState::GAME; SaveName(); } // pressing start saves the name
         ImGui::PopStyleColor();
         ImGui::Dummy(ImVec2(0, 20)); // sets spacing!
 
@@ -181,6 +190,8 @@ void HUD::RenderGameOver(SDL_Renderer* renderer, int score, int bestScore, int l
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground;
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 10.0f);
 
+    std::vector<ScoreEntry> entries = ScoreManager::LoadLeaderboard();
+
     // --- LEADERBOARD WINDOW ---
     float boardW = 450.0f; 
     float boardH = 400.0f;
@@ -188,22 +199,19 @@ void HUD::RenderGameOver(SDL_Renderer* renderer, int score, int bestScore, int l
     ImGui::SetNextWindowPos(ImVec2((currentWindowWidth - boardW) * 0.5f, 50)); 
     ImGui::SetNextWindowSize(ImVec2(boardW, boardH));
     ImGui::Begin("Leaderboard", NULL, flags);
-        // --- TITLE ---
+        // TITLE
         float winWidth = ImGui::GetWindowSize().x;
         float titleW = ImGui::CalcTextSize("GAME OVER!").x;
         ImGui::SetCursorPosX((winWidth - titleW) * 0.5f);
         ImGui::TextColored(ImVec4(1, 0, 0, 1), "GAME OVER!");
         
-        // --- PLAYER SCORE ---
+        // PLAYER SCORE
         std::string scoreStr = "YOUR SCORE: " + std::to_string(score);
         float scoreW = ImGui::CalcTextSize(scoreStr.c_str()).x;
         ImGui::SetCursorPosX((winWidth - scoreW) * 0.5f);
         ImGui::Text("%s", scoreStr.c_str());
-
         ImGui::Dummy(ImVec2(0, 30)); 
-
-        // --- TABLE HEADERS ---
-        // We use a fixed offset for columns to keep them perfectly aligned
+        // these are just offsets for each column
         float col1 = 50.0f;  // Rank
         float col2 = 150.0f; // Score
         float col3 = 300.0f; // Name
@@ -214,27 +222,24 @@ void HUD::RenderGameOver(SDL_Renderer* renderer, int score, int bestScore, int l
         ImGui::Separator();
 
         // --- TABLE ROWS ---
-        for (int i = 1; i <= 5; i++) {
-            // Rank logic (1st, 2nd, etc)
+        for (int i = 0; i < entries.size(); i++) {
             std::string prefix = "TH";
-            if (i == 1) prefix = "ST";
-            else if (i == 2) prefix = "ND";
-            else if (i == 3) prefix = "RD";
+            if (i == 0) prefix = "ST";
+            else if (i == 1) prefix = "ND";
+            else if (i == 2) prefix = "RD";
 
-            // Row Color: Highlight the top rank in Gold
-            if (i == 1) ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0.8f, 0, 1));
+            if (i == 0) ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0.8f, 0, 1)); // gold text
 
             ImGui::SetCursorPosX(col1); 
-            ImGui::Text("%d%s", i, prefix.c_str());
+            ImGui::Text("%d%s", (i + 1), prefix.c_str());
 
             ImGui::SameLine(col2); 
-            ImGui::Text("%d", bestScore - (i * 100)); // Mockup data
+            ImGui::Text("%d", entries[i].score); 
 
             ImGui::SameLine(col3); 
-            //std::string nameMock = TruncateName("LongPlayerNameExample", 10);
-            ImGui::Text("%s", "player");
+            ImGui::Text("%s", entries[i].name);
 
-            if (i == 1) ImGui::PopStyleColor();
+            if (i == 0) ImGui::PopStyleColor();
         }
     ImGui::End();
 
@@ -253,7 +258,7 @@ void HUD::RenderGameOver(SDL_Renderer* renderer, int score, int bestScore, int l
         ImGui::Dummy(ImVec2(0, 10)); // sets spacing!
         // REPLAY
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.5f, 0.3f, 1.0f));
-        if (ImGui::Button("REPLAY", ImVec2(buttonW, 60))) { currentState = GameState::QUIT; }
+        if (ImGui::Button("REPLAY", ImVec2(buttonW, 60))) { currentState = GameState::REPLAY; }
         ImGui::PopStyleColor();
         ImGui::Dummy(ImVec2(0, 10));
         // QUIT
@@ -264,3 +269,28 @@ void HUD::RenderGameOver(SDL_Renderer* renderer, int score, int bestScore, int l
     ImGui::End();
 }
 
+void HUD::RenderReplay(SDL_Renderer *renderer, GameState &currentState) {
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground;
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::Begin("ReplayMenu", NULL, flags);
+        // EXIT REPLAY
+        if (ImGui::Button("EXIT")) { currentState = GameState::GAME_OVER; }
+    ImGui::End();
+}
+
+/* -------------------- NAME SYSTEM -------------------- */
+void HUD::LoadName() {
+    std::ifstream file("name.txt");
+    if (file.is_open()) {
+        file.getline(playerName, 64);
+        file.close();
+    }
+}
+
+void HUD::SaveName() {
+    std::ofstream file("name.txt");
+    if (file.is_open()) {
+        file << playerName;
+        file.close();
+    }
+}
