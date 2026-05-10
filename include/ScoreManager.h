@@ -1,4 +1,11 @@
 #pragma once
+#include <vector>
+#include <string>
+
+struct ScoreEntry {
+    char name[20]; 
+    int score;
+};
 
 class ScoreManager 
 {
@@ -13,5 +20,7 @@ public:
     static int Get() { return score; }
     static int GetBest() { return bestScore; }
     static int SetBest(int amount) { bestScore = amount; }
-    static void Reset() { score = 0; }
+    static void Reset() { score = 0; bestScore = 0; }
+    static void SaveFinalScore(const std::string& playerName);
+    static std::vector<ScoreEntry> LoadLeaderboard();
 };
