@@ -10,15 +10,14 @@ void Replay::SaveFrame(glm::vec2 position, int playerSpriteIndex) {
 }
 
 void Replay::SaveReplay() {
-    std::ofstream file("replay.bin", std::ios::binary | std::ios::trunc);
+    std::ofstream file("replay.bin", std::ios::binary | std::ios::trunc); // trunc - all the existing data will be deleted when the file is opened
     if (file.is_open() && !recordingArr.empty()) {
         file.write((char*)recordingArr.data(), recordingArr.size() * sizeof(ReplayFrame));
         file.close();
     }
 }
 
-void Replay::LoadReplay()
-{
+void Replay::LoadReplay() {
     replayArr.clear();
     currentFrame = 0;
     std::ifstream file("replay.bin", std::ios::binary);

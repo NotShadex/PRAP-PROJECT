@@ -6,7 +6,7 @@
 
 
 void ScoreManager::SaveFinalScore(const std::string& playerName) {
-    std::vector<ScoreEntry> entries = LoadLeaderboard();
+    std::vector<ScoreEntry> entries = LoadLeaderboard(); // loads previous entries
 
     // make a new input field
     ScoreEntry newEntry;
@@ -15,9 +15,15 @@ void ScoreManager::SaveFinalScore(const std::string& playerName) {
     newEntry.score = bestScore;
     entries.push_back(newEntry);
 
-    std::sort(entries.begin(), entries.end(), [](const ScoreEntry& a, const ScoreEntry& b) {
-        return a.score > b.score;
-    });
+    for (size_t i = 0; i < entries.size() - 1; i++) {
+        for (size_t j = 0; j < entries.size() - i - 1; j++) {
+            if (entries[j].score < entries[j + 1].score) {
+                ScoreEntry temp = entries[j];
+                entries[j] = entries[j + 1];
+                entries[j + 1] = temp;
+            }
+        }
+    }
 
     if (entries.size() > 5) entries.resize(5); // only check top 5
 
